@@ -983,7 +983,7 @@
 \@xx{}%
 \@x{\@s{16.4} clusterUpdating}%
 \@y{\@s{0}%
- damn, I used a lock\.{\dots}
+ damn, I use a lock\.{\dots}
 }%
 \@xx{}%
 \@pvspace{8.0pt}%
@@ -1074,6 +1074,7 @@ Actions
 \end{cpar}%
 \end{lcom}%
 \@x{ Submit ( r ) \.{\defeq}}%
+\@x{\@s{16.4}}%
 \@y{\@s{0}%
  update request received from the user
 }%
@@ -1087,6 +1088,7 @@ Actions
  ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ PushToPending ( r ) \.{\defeq}}%
+\@x{\@s{16.4}}%
 \@y{\@s{0}%
  the request is pushed to queue
 }%
@@ -1104,6 +1106,7 @@ Actions
  lastVOK ,\, toApply ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ SpawnWorker ( w ) \.{\defeq}}%
+\@x{\@s{16.4}}%
 \@y{\@s{0}%
  spawns a new worker
 }%
@@ -1120,6 +1123,7 @@ Actions
  lastVOK ,\, toApply ,\, requests ,\, cluster {\rangle}}%
 \@pvspace{24.0pt}%
 \@x{ ApplyStart ( w ) \.{\defeq}}%
+\@x{\@s{16.4}}%
 \@y{\@s{0}%
  the cluster starts to be modified
 }%
@@ -1160,8 +1164,9 @@ Actions
 }%
 \@xx{}%
 \@x{\@s{16.4} lastVOK \.{+} 10}%
-\@pvspace{8.0pt}%
+\@pvspace{16.0pt}%
 \@x{ ApplyFinish ( w ) \.{\defeq}}%
+\@x{\@s{16.4}}%
 \@y{\@s{0}%
  the cluster update finishes
 }%
@@ -1207,26 +1212,6 @@ Actions
 \@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
-Requirements
-\end{cpar}%
-\end{lcom}%
-\@x{ NoConcurrentUpdate \.{\defeq}}%
- \@x{\@s{16.4} {\Box} ( Cardinality ( \{ r \.{\in} {\DOMAIN} requests \.{:}
- requests [ r ] . st \.{=}\@w{working} \} ) \.{<} 2 )}%
-\@pvspace{8.0pt}%
-\@x{ NoPartialUpdateTermination \.{\defeq}}%
-\@y{\@s{0}%
- we don’t want the cluster to end up in a partially update \ensuremath{st
-}}%
-\@xx{}%
-\@x{\@s{16.4} {\Diamond} {\Box} ( cluster . st \.{=}\@w{idle} )}%
-\@pvspace{8.0pt}%
-\@x{ EveryReqIsProcessed \.{\defeq}}%
- \@x{\@s{16.4} {\Diamond} {\Box} ( {\lnot} \E\, r \.{\in} \_Requests \.{:}
- requests [ r ] . st \.{=}\@w{waiting} )}%
-\@pvspace{24.0pt}%
-\begin{lcom}{0}%
-\begin{cpar}{0}{F}{F}{0}{0}{}%
 Spec
 \end{cpar}%
 \end{lcom}%
@@ -1252,7 +1237,30 @@ Spec
 \@x{\@s{8.2} \.{\land}\@s{0.16} {\Box} [ Next ]_{ vars}}%
 \@x{\@s{8.2} \.{\land}\@s{0.16} Fairness}%
 \@pvspace{16.0pt}%
+\begin{lcom}{0}%
+\begin{cpar}{0}{F}{F}{0}{0}{}%
+Expectations
+\end{cpar}%
+\end{lcom}%
+\@x{ NoConcurrentUpdate \.{\defeq}}%
+ \@x{\@s{16.4} {\Box} ( Cardinality ( \{ w \.{\in} {\DOMAIN} workers \.{:}
+ workers [ w ] . st \.{=}\@w{working} \} ) \.{<} 2 )}%
+\@pvspace{8.0pt}%
+\@x{ NoPartialUpdateTermination \.{\defeq}}%
+\@x{\@s{16.4}}%
+\@y{\@s{0}%
+ we don’t want the cluster to end up in a partially update state
+}%
+\@xx{}%
+\@x{\@s{16.4} {\Diamond} {\Box} ( cluster . st \.{=}\@w{idle} )}%
+\@pvspace{8.0pt}%
+\@x{ EveryReqIsProcessed \.{\defeq}}%
+ \@x{\@s{16.4} {\Diamond} {\Box} ( {\lnot} \E\, r \.{\in} \_Requests \.{:}
+ requests [ r ] . st \.{=}\@w{waiting} )}%
+\@pvspace{8.0pt}%
 \@x{ {\THEOREM} Spec \.{\implies} {\Box} ( TypeInvariants )}%
+\@x{ {\THEOREM} Spec \.{\implies} NoConcurrentUpdate}%
 \@x{ {\THEOREM} Spec \.{\implies} NoPartialUpdateTermination}%
+\@x{ {\THEOREM} Spec \.{\implies} EveryReqIsProcessed}%
 \@x{}\bottombar\@xx{}%
 \end{document}

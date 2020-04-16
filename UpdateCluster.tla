@@ -12,7 +12,7 @@ VARIABLES
     cluster, \*  cluster state 
     requests, \* the state of all requests
     workers, \* the state of all workers
-    clusterUpdating \* damn, I used a lock... 
+    clusterUpdating \* damn, I use a lock... 
 
 VARIABLES 
     \* these variables are tla+ details
@@ -62,7 +62,8 @@ Init ==
 (***************************************************************************)
 (* Actions                                                                 *)
 (***************************************************************************)
-Submit(r) == \* update request received from the user 
+Submit(r) == 
+    \* update request received
     LET newV == reqCounter + 1 IN
     /\ requests[r].st = "waiting"
     /\ reqCounter' = newV
@@ -70,7 +71,8 @@ Submit(r) == \* update request received from the user
     /\ UNCHANGED <<confOK, lastVOK, toApply, cluster, workers, clusterUpdating>>
 
 
-PushToPending(r) == \* the request is pushed to queue
+PushToPending(r) == 
+    \* the request is pushed
     /\ requests[r].st = "submitted"
     /\ IF toApply < requests[r].v
         THEN /\ requests' = [requests EXCEPT  ![r].st = "valid"]
@@ -80,9 +82,10 @@ PushToPending(r) == \* the request is pushed to queue
              /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, clusterUpdating>>
 
 
-SpawnWorker(w) == \* spawns a new worker
-    /\ workers[w].st = "waiting"
+SpawnWorker(w) == 
+    \* spawns a new worker
     /\ toApply /= lastVOK
+    /\ workers[w].st = "waiting"
     /\ clusterUpdating = FALSE
     /\  \/ cluster.st = "idle"
         \/ cluster.st = "failed"
@@ -92,7 +95,8 @@ SpawnWorker(w) == \* spawns a new worker
     
 
 
-ApplyStart(w) == \* the cluster starts to be modified
+ApplyStart(w) == 
+    \* the cluster starts to be modified
     /\ workers[w].st = "starting"
     /\ IF workers[w].v >= toApply 
         THEN 
@@ -115,7 +119,9 @@ RollbackVersion ==
     \* to differenciate it from the original last VOK (in realworld, could be conf + timestamp)
     lastVOK + 10
 
-ApplyFinish(w) == \* the cluster update finishes
+
+ApplyFinish(w) == 
+    \* the cluster update finishes
     /\ workers[w].st = "working"
     /\ clusterUpdating' = FALSE
     /\ \E ok \in BOOLEAN : 
@@ -135,21 +141,7 @@ ApplyFinish(w) == \* the cluster update finishes
                         /\ toApply' = RollbackVersion 
                         /\ UNCHANGED <<confOK, reqCounter, lastVOK, requests>>
             
-
-
-(***************************************************************************)
-(* Requirements                                                            *)
-(***************************************************************************)
-NoConcurrentUpdate == 
-    [](Cardinality({r \in DOMAIN requests: requests[r].st = "working"}) < 2)
-    
-NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
-    <>[](cluster.st = "idle")
-
-EveryReqIsProcessed ==
-    <>[](~\E r \in _Requests: requests[r].st = "waiting")
-    
-    
+            
 
 (***************************************************************************)
 (* Spec                                                                    *)
@@ -176,8 +168,23 @@ Spec ==
   /\ Init 
   /\ [][Next]_vars 
   /\ Fairness
+  
+  
+(***************************************************************************)
+(* Expectations                                                            *)
+(***************************************************************************)
+NoConcurrentUpdate == 
+    [](Cardinality({w \in DOMAIN workers: workers[w].st = "working"}) < 2)
+    
+NoPartialUpdateTermination == 
+    \* we don’t want the cluster to end up in a partially update state
+    <>[](cluster.st = "idle")
 
+EveryReqIsProcessed ==
+    <>[](~\E r \in _Requests: requests[r].st = "waiting")
 
 THEOREM Spec => [](TypeInvariants)
+THEOREM Spec => NoConcurrentUpdate
 THEOREM Spec => NoPartialUpdateTermination
+THEOREM Spec => EveryReqIsProcessed
 =====

@@ -1,32 +1,29 @@
 ---- MODULE UpdateCluster ----
 EXTENDS Integers, FiniteSets
 
-
 CONSTANTS  
     _Requests, \* the requests sent by the user
     _Workers, \* the pool of workers
     NULL
 
-
 VARIABLES 
     lastVOK, \* last successfully applied version
-    toApply, \* the version to apply (last requets that passed the initial tests)
+    toApply, \* the version to apply (last request that passed the initial tests)
     cluster, \*  cluster state 
     requests, \* the state of all requests
     workers, \* the state of all workers
-    lock \* damn, I used a lock...
+    clusterUpdating \* damn, I used a lock... 
 
 VARIABLES 
     \* these variables are tla+ details
     confOK, \* are we able to get a valid conf ? 
     reqCounter \* just to keep track of the order of submissions 
 
-vars == <<confOK, reqCounter, lastVOK, toApply, cluster, requests, workers, lock>>
-
+vars == <<confOK, reqCounter, lastVOK, toApply, cluster, requests, workers, clusterUpdating>>
 
 TypeInvariants == 
     /\ confOK \in BOOLEAN \* won't change for a specific behavior
-    /\ lock \in BOOLEAN
+    /\ clusterUpdating \in BOOLEAN
     /\ cluster.st \in {
         "idle", 
         "starting",
@@ -58,7 +55,7 @@ Init ==
     /\ reqCounter = 0
     /\ toApply = 0 
     /\ confOK \in BOOLEAN
-    /\ lock = FALSE
+    /\ clusterUpdating = FALSE
 
 
 
@@ -70,37 +67,27 @@ Submit(r) == \* update request received from the user
     /\ requests[r].st = "waiting"
     /\ reqCounter' = newV
     /\ requests' = [requests EXCEPT ![r].st = "submitted", ![r].v = newV]
-    /\ UNCHANGED <<confOK, lastVOK, toApply, cluster, workers, lock>>
-
-
-Initialcheck(r) == \* request validation (auth, quotas...)
-    /\ requests[r].st = "submitted"
-    /\ \E ok \in BOOLEAN: 
-        IF ok
-            THEN  
-                requests' = [requests EXCEPT  ![r].st = "valid"]
-            ELSE 
-                requests' = [requests EXCEPT  ![r].st = "rejected"]
-    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, lock>>
+    /\ UNCHANGED <<confOK, lastVOK, toApply, cluster, workers, clusterUpdating>>
 
 
 PushToPending(r) == \* the request is pushed to queue
-    /\ requests[r].st = "valid"
+    /\ requests[r].st = "submitted"
     /\ IF toApply < requests[r].v
-        THEN /\ toApply' = requests[r].v
-             /\ UNCHANGED <<confOK, reqCounter, lastVOK, cluster, requests, workers, lock>>
+        THEN /\ requests' = [requests EXCEPT  ![r].st = "valid"]
+             /\ toApply' = requests[r].v
+             /\ UNCHANGED <<confOK, reqCounter, lastVOK, cluster, workers, clusterUpdating>>
         ELSE /\ requests' = [requests EXCEPT ![r].st = "rejected"]
-             /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, lock>>
+             /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, clusterUpdating>>
 
 
 SpawnWorker(w) == \* spawns a new worker
     /\ workers[w].st = "waiting"
     /\ toApply /= lastVOK
-    /\ lock = FALSE
+    \*/\ clusterUpdating = FALSE
     /\  \/ cluster.st = "idle"
         \/ cluster.st = "failed"
     /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
-    /\ lock' = TRUE
+    /\ clusterUpdating' = TRUE
     /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests, cluster>> 
     
 
@@ -113,24 +100,24 @@ ApplyStart(w) == \* the cluster starts to be modified
                 THEN 
                     /\ cluster' = [v |-> workers[w].v, st |-> "partial"]
                     /\ workers' = [workers EXCEPT ![w].st = "working"]
-                    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests, lock>>
+                    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests, clusterUpdating>>
                 ELSE 
-                    /\ lock' = FALSE
+                    /\ clusterUpdating' = FALSE
                     /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
                     /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, requests>>       
         ELSE \* a new version has been submitted, no need to apply this one
             /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
-            /\ lock' = FALSE
+            /\ clusterUpdating' = FALSE
             /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, requests>>
     
     
 RollbackVersion == 
-    \* to differenciate it from the original last VOK
+    \* to differenciate it from the original last VOK (in realworld, could be conf + timestamp)
     lastVOK + 10
 
 ApplyFinish(w) == \* the cluster update finishes
     /\ workers[w].st = "working"
-    /\ lock' = FALSE
+    /\ clusterUpdating' = FALSE
     /\ \E ok \in BOOLEAN : 
         IF ok \/ workers[w].v = RollbackVersion  \* rollback always works
             THEN 
@@ -148,31 +135,14 @@ ApplyFinish(w) == \* the cluster update finishes
                         /\ toApply' = RollbackVersion 
                         /\ UNCHANGED <<confOK, reqCounter, lastVOK, requests>>
             
-
-(***************************************************************************)
-(* Requirements                                                            *)
-(***************************************************************************)
-NoConcurrentUpdate == 
-    [](Cardinality({r \in DOMAIN requests: requests[r].st = "working"}) < 2)
-    
-NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
-    <>[](cluster.st = "idle")
-
-EveryReqIsProcessed ==
-    <>[](~\E r \in _Requests: requests[r].st = "waiting")
-    
-    
+            
 
 (***************************************************************************)
 (* Spec                                                                    *)
 (***************************************************************************)
-
-        
-        
 Next ==
     \/ \E r \in _Requests : 
             \/ Submit(r) 
-            \/ Initialcheck(r) 
             \/ PushToPending(r)
     \/ \E w \in _Workers:
             \/ SpawnWorker(w)
@@ -182,7 +152,6 @@ Next ==
 
 Fairness == \A r \in _Requests, w \in _Workers : 
                 /\ WF_vars(Submit(r)) 
-                /\ WF_vars(Initialcheck(r)) 
                 /\ WF_vars(PushToPending(r))
                 /\ WF_vars(SpawnWorker(w)) 
                 /\ WF_vars(ApplyStart(w)) 
@@ -193,13 +162,22 @@ Spec ==
   /\ Init 
   /\ [][Next]_vars 
   /\ Fairness
+  
+  
+(***************************************************************************)
+(* Expectations                                                            *)
+(***************************************************************************)
+NoConcurrentUpdate == 
+    [](Cardinality({w \in DOMAIN workers: workers[w].st = "working"}) < 2)
+    
+NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
+    <>[](cluster.st = "idle")
 
-
-
+EveryReqIsProcessed ==
+    <>[](~\E r \in _Requests: requests[r].st = "waiting")
 
 THEOREM Spec => [](TypeInvariants)
+THEOREM Spec => NoConcurrentUpdate
 THEOREM Spec => NoPartialUpdateTermination
-\*THEOREM Spec => NoApplicationOfOutdatedReq
-\*THEOREM Spec => EveryReqInQueueIsProcessed
-
+THEOREM Spec => EveryReqIsProcessed
 =====

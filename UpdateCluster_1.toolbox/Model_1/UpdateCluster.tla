@@ -83,7 +83,7 @@ PushToPending(r) == \* the request is pushed to queue
 SpawnWorker(w) == \* spawns a new worker
     /\ workers[w].st = "waiting"
     /\ toApply /= lastVOK
-    /\ clusterUpdating = FALSE
+    \*/\ clusterUpdating = FALSE
     /\  \/ cluster.st = "idle"
         \/ cluster.st = "failed"
     /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
@@ -135,21 +135,7 @@ ApplyFinish(w) == \* the cluster update finishes
                         /\ toApply' = RollbackVersion 
                         /\ UNCHANGED <<confOK, reqCounter, lastVOK, requests>>
             
-
-
-(***************************************************************************)
-(* Requirements                                                            *)
-(***************************************************************************)
-NoConcurrentUpdate == 
-    [](Cardinality({r \in DOMAIN requests: requests[r].st = "working"}) < 2)
-    
-NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
-    <>[](cluster.st = "failed")
-
-EveryReqIsProcessed ==
-    <>[](~\E r \in _Requests: requests[r].st = "waiting")
-    
-    
+            
 
 (***************************************************************************)
 (* Spec                                                                    *)
@@ -176,8 +162,22 @@ Spec ==
   /\ Init 
   /\ [][Next]_vars 
   /\ Fairness
+  
+  
+(***************************************************************************)
+(* Expectations                                                            *)
+(***************************************************************************)
+NoConcurrentUpdate == 
+    [](Cardinality({w \in DOMAIN workers: workers[w].st = "working"}) < 2)
+    
+NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
+    <>[](cluster.st = "idle")
 
+EveryReqIsProcessed ==
+    <>[](~\E r \in _Requests: requests[r].st = "waiting")
 
 THEOREM Spec => [](TypeInvariants)
+THEOREM Spec => NoConcurrentUpdate
 THEOREM Spec => NoPartialUpdateTermination
+THEOREM Spec => EveryReqIsProcessed
 =====
