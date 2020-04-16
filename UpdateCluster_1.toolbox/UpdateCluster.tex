@@ -941,7 +941,7 @@
 \setboolean{shading}{true}
 \@x{}\moduleLeftDash\@xx{ {\MODULE} UpdateCluster}\moduleRightDash\@xx{}%
 \@x{ {\EXTENDS} Integers ,\, FiniteSets}%
-\@pvspace{16.0pt}%
+\@pvspace{8.0pt}%
 \@x{ {\CONSTANTS}}%
 \@x{\@s{16.4} \_Requests ,\,\@s{0.49}}%
 \@y{\@s{0}%
@@ -954,7 +954,7 @@
 }%
 \@xx{}%
 \@x{\@s{16.4} NULL}%
-\@pvspace{16.0pt}%
+\@pvspace{8.0pt}%
 \@x{ {\VARIABLES}}%
 \@x{\@s{16.4} lastVOK ,\,}%
 \@y{\@s{0}%
@@ -1006,7 +1006,7 @@
 \@pvspace{8.0pt}%
  \@x{ vars \.{\defeq} {\langle} confOK ,\, reqCounter ,\, lastVOK ,\, toApply
  ,\, cluster ,\, requests ,\, workers ,\, lock {\rangle}}%
-\@pvspace{16.0pt}%
+\@pvspace{8.0pt}%
 \@x{ TypeInvariants \.{\defeq}}%
 \@x{\@s{16.4} \.{\land} confOK \.{\in} {\BOOLEAN}}%
 \@y{\@s{0}%
@@ -1218,7 +1218,7 @@ Actions
 \@x{\@s{95.87} \.{\land} toApply \.{'} \.{=} RollbackVersion}%
  \@x{\@s{95.87} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
  lastVOK ,\, requests {\rangle}}%
-\@pvspace{16.0pt}%
+\@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
 Requirements
@@ -1244,7 +1244,6 @@ Requirements
 Spec
 \end{cpar}%
 \end{lcom}%
-\@pvspace{24.0pt}%
 \@x{ Next \.{\defeq}}%
 \@x{\@s{16.4} \.{\lor} \E\, r \.{\in} \_Requests \.{:}}%
 \@x{\@s{40.02} \.{\lor} Submit ( r )}%
@@ -1268,21 +1267,8 @@ Spec
 \@x{\@s{8.2} \.{\land}\@s{0.16} Init}%
 \@x{\@s{8.2} \.{\land}\@s{0.16} {\Box} [ Next ]_{ vars}}%
 \@x{\@s{8.2} \.{\land}\@s{0.16} Fairness}%
-\@pvspace{32.0pt}%
+\@pvspace{16.0pt}%
 \@x{ {\THEOREM} Spec \.{\implies} {\Box} ( TypeInvariants )}%
 \@x{ {\THEOREM} Spec \.{\implies} NoPartialUpdateTermination}%
-\@x{}%
-\@y{%
- \ensuremath{{\THEOREM}} \ensuremath{Spec \.{\implies}
- NoApplicationOfOutdatedReq
-}}%
-\@xx{}%
-\@x{}%
-\@y{%
- \ensuremath{{\THEOREM}} \ensuremath{Spec \.{\implies}
- EveryReqInQueueIsProcessed
-}}%
-\@xx{}%
-\@pvspace{8.0pt}%
 \@x{}\bottombar\@xx{}%
 \end{document}

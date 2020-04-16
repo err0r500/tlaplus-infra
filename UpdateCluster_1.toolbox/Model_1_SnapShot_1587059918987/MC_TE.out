@@ -2,7 +2,7 @@
 TLC2 Version 2.14 of 10 July 2019
 @!@!@ENDMSG 2262 @!@!@
 @!@!@STARTMSG 2187:0 @!@!@
-Running breadth-first search Model-Checking with fp 37 and seed -5720372103889197226 with 6 workers on 8 cores with 2336MB heap and 5254MB offheap memory [pid: 157137] (Linux 5.5.13-200.fc31.x86_64 amd64, AdoptOpenJDK 11.0.3 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+Running breadth-first search Model-Checking with fp 16 and seed -3422289520639432811 with 6 workers on 8 cores with 2336MB heap and 5254MB offheap memory [pid: 157072] (Linux 5.5.13-200.fc31.x86_64 amd64, AdoptOpenJDK 11.0.3 x86_64, OffHeapDiskFPSet, DiskStateQueue).
 @!@!@ENDMSG 2187 @!@!@
 @!@!@STARTMSG 2220:0 @!@!@
 Starting SANY...
@@ -25,7 +25,7 @@ Semantic processing of module MC
 SANY finished.
 @!@!@ENDMSG 2219 @!@!@
 @!@!@STARTMSG 2185:0 @!@!@
-Starting... (2020-04-16 19:59:15)
+Starting... (2020-04-16 19:58:35)
 @!@!@ENDMSG 2185 @!@!@
 @!@!@STARTMSG 2212:0 @!@!@
 Implied-temporal checking--satisfiability problem has 1 branches.
@@ -34,200 +34,82 @@ Implied-temporal checking--satisfiability problem has 1 branches.
 Computing initial states...
 @!@!@ENDMSG 2189 @!@!@
 @!@!@STARTMSG 2190:0 @!@!@
-Finished computing initial states: 2 distinct states generated at 2020-04-16 19:59:16.
+Finished computing initial states: 2 distinct states generated at 2020-04-16 19:58:36.
 @!@!@ENDMSG 2190 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(16) at 2020-04-16 19:59:17: 6,332 states generated, 2,909 distinct states found, 0 states left on queue.
+Progress(16) at 2020-04-16 19:58:37: 6,332 states generated, 2,909 distinct states found, 0 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2192:0 @!@!@
-Checking temporal properties for the complete state space with 2909 total distinct states at (2020-04-16 19:59:17)
+Checking temporal properties for the complete state space with 2909 total distinct states at (2020-04-16 19:58:37)
 @!@!@ENDMSG 2192 @!@!@
-@!@!@STARTMSG 2116:1 @!@!@
-Temporal properties were violated.
-
-@!@!@ENDMSG 2116 @!@!@
-@!@!@STARTMSG 2264:1 @!@!@
-The following behavior constitutes a counter-example:
-
-@!@!@ENDMSG 2264 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-1: <Initial predicate>
-/\ confOK = FALSE
-/\ reqCounter = 0
-/\ toApply = 0
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
-  r2 :> [st |-> "waiting", v |-> NULL] @@
-  r3 :> [st |-> "waiting", v |-> NULL] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-2: <Submit line 67, col 5 to line 70, col 80 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 1
-/\ toApply = 0
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
-  r2 :> [st |-> "waiting", v |-> NULL] @@
-  r3 :> [st |-> "submitted", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-3: <PushToPending line 74, col 5 to line 80, col 101 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 1
-/\ toApply = 1
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
-  r2 :> [st |-> "waiting", v |-> NULL] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-4: <Submit line 67, col 5 to line 70, col 80 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 2
-/\ toApply = 1
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
-  r2 :> [st |-> "submitted", v |-> 2] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-5: <Submit line 67, col 5 to line 70, col 80 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 3
-/\ toApply = 1
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "submitted", v |-> 3] @@
-  r2 :> [st |-> "submitted", v |-> 2] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-6: <PushToPending line 74, col 5 to line 80, col 101 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 3
-/\ toApply = 2
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "submitted", v |-> 3] @@
-  r2 :> [st |-> "valid", v |-> 2] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-7: <PushToPending line 74, col 5 to line 80, col 101 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 3
-/\ toApply = 3
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "valid", v |-> 3] @@
-  r2 :> [st |-> "valid", v |-> 2] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = FALSE
-/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2217:4 @!@!@
-8: <SpawnWorker line 84, col 5 to line 91, col 76 of module UpdateCluster>
-/\ confOK = FALSE
-/\ reqCounter = 3
-/\ toApply = 3
-/\ cluster = [st |-> "idle", v |-> 0]
-/\ requests = ( r1 :> [st |-> "valid", v |-> 3] @@
-  r2 :> [st |-> "valid", v |-> 2] @@
-  r3 :> [st |-> "valid", v |-> 1] )
-/\ lastVOK = 0
-/\ clusterUpdating = TRUE
-/\ workers = (w1 :> [st |-> "starting", v |-> 3] @@ w2 :> [st |-> "waiting", v |-> NULL])
-
-@!@!@ENDMSG 2217 @!@!@
-@!@!@STARTMSG 2122:4 @!@!@
-7: Back to state: <ApplyStart line 96, col 5 to line 111, col 84 of module UpdateCluster>
-
-@!@!@ENDMSG 2122 @!@!@
 @!@!@STARTMSG 2267:0 @!@!@
-Finished checking temporal properties in 00s at 2020-04-16 19:59:17
+Finished checking temporal properties in 00s at 2020-04-16 19:58:37
 @!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2193:0 @!@!@
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 5.4E-13
+@!@!@ENDMSG 2193 @!@!@
 @!@!@STARTMSG 2201:0 @!@!@
-The coverage statistics at 2020-04-16 19:59:17
+The coverage statistics at 2020-04-16 19:58:37
 @!@!@ENDMSG 2201 @!@!@
 @!@!@STARTMSG 2773:0 @!@!@
-<Init line 50, col 1 to line 50, col 4 of module UpdateCluster>: 4:4
+<Init line 50, col 1 to line 50, col 4 of module UpdateCluster>: 2:2
 @!@!@ENDMSG 2773 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 51, col 8 to line 51, col 70 of module UpdateCluster: 2
+  line 51, col 8 to line 51, col 70 of module UpdateCluster: 1
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 52, col 8 to line 52, col 68 of module UpdateCluster: 2
+  line 52, col 8 to line 52, col 68 of module UpdateCluster: 1
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 53, col 8 to line 53, col 41 of module UpdateCluster: 2
+  line 53, col 8 to line 53, col 41 of module UpdateCluster: 1
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 57, col 8 to line 57, col 25 of module UpdateCluster: 2
+  line 57, col 8 to line 57, col 25 of module UpdateCluster: 1
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 58, col 8 to line 58, col 30 of module UpdateCluster: 4
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2772:0 @!@!@
-<Submit line 65, col 1 to line 65, col 9 of module UpdateCluster (67 5 70 80)>: 72:644
-@!@!@ENDMSG 2772 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 67, col 8 to line 67, col 33 of module UpdateCluster: 9389
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  |line 67, col 8 to line 67, col 21 of module UpdateCluster: 8745
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 68, col 8 to line 68, col 25 of module UpdateCluster: 644
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 69, col 8 to line 69, col 73 of module UpdateCluster: 644
-@!@!@ENDMSG 2221 @!@!@
-@!@!@STARTMSG 2221:0 @!@!@
-  line 70, col 8 to line 70, col 80 of module UpdateCluster: 644
+  line 58, col 8 to line 58, col 30 of module UpdateCluster: 2
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<PushToPending line 73, col 1 to line 73, col 16 of module UpdateCluster>: 563:1798
+<Submit line 65, col 1 to line 65, col 9 of module UpdateCluster (67 5 70 80)>: 69:636
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 74, col 8 to line 74, col 35 of module UpdateCluster: 10540
+  line 67, col 8 to line 67, col 33 of module UpdateCluster: 9363
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 74, col 8 to line 74, col 21 of module UpdateCluster: 8742
+  |line 67, col 8 to line 67, col 21 of module UpdateCluster: 8727
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 75, col 11 to line 75, col 33 of module UpdateCluster: 1798
+  line 68, col 8 to line 68, col 25 of module UpdateCluster: 636
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 76, col 17 to line 76, col 64 of module UpdateCluster: 478
+  line 69, col 8 to line 69, col 73 of module UpdateCluster: 636
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 77, col 17 to line 77, col 40 of module UpdateCluster: 478
+  line 70, col 8 to line 70, col 80 of module UpdateCluster: 636
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<PushToPending line 73, col 1 to line 73, col 16 of module UpdateCluster>: 561:1794
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 74, col 8 to line 74, col 35 of module UpdateCluster: 10521
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 78, col 17 to line 78, col 92 of module UpdateCluster: 478
+  |line 74, col 8 to line 74, col 21 of module UpdateCluster: 8727
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 75, col 11 to line 75, col 33 of module UpdateCluster: 1794
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 76, col 17 to line 76, col 64 of module UpdateCluster: 474
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 77, col 17 to line 77, col 40 of module UpdateCluster: 474
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 78, col 17 to line 78, col 92 of module UpdateCluster: 474
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
   line 79, col 17 to line 79, col 66 of module UpdateCluster: 1320
@@ -236,67 +118,67 @@ The coverage statistics at 2020-04-16 19:59:17
   line 80, col 17 to line 80, col 101 of module UpdateCluster: 1320
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<SpawnWorker line 83, col 1 to line 83, col 14 of module UpdateCluster>: 1012:1027
+<SpawnWorker line 83, col 1 to line 83, col 14 of module UpdateCluster>: 1016:1026
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 84, col 8 to line 84, col 32 of module UpdateCluster: 6847
+  line 84, col 8 to line 84, col 32 of module UpdateCluster: 6844
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 84, col 8 to line 84, col 20 of module UpdateCluster: 5820
+  |line 84, col 8 to line 84, col 20 of module UpdateCluster: 5818
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 85, col 8 to line 85, col 25 of module UpdateCluster: 4788
+  line 85, col 8 to line 85, col 25 of module UpdateCluster: 4786
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 85, col 8 to line 85, col 14 of module UpdateCluster: 3761
+  |line 85, col 8 to line 85, col 14 of module UpdateCluster: 3760
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 85, col 19 to line 85, col 25 of module UpdateCluster: 3761
+  |line 85, col 19 to line 85, col 25 of module UpdateCluster: 3760
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 86, col 8 to line 86, col 30 of module UpdateCluster: 4112
+  line 86, col 8 to line 86, col 30 of module UpdateCluster: 4110
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 86, col 8 to line 86, col 22 of module UpdateCluster: 3085
+  |line 86, col 8 to line 86, col 22 of module UpdateCluster: 3084
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 86, col 26 to line 86, col 30 of module UpdateCluster: 3085
+  |line 86, col 26 to line 86, col 30 of module UpdateCluster: 3084
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 87, col 12 to line 87, col 30 of module UpdateCluster: 1544
+  line 87, col 12 to line 87, col 30 of module UpdateCluster: 1542
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 87, col 12 to line 87, col 21 of module UpdateCluster: 1027
+  |line 87, col 12 to line 87, col 21 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 88, col 12 to line 88, col 32 of module UpdateCluster: 1537
+  line 88, col 12 to line 88, col 32 of module UpdateCluster: 1536
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 88, col 12 to line 88, col 21 of module UpdateCluster: 1027
+  |line 88, col 12 to line 88, col 21 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 89, col 8 to line 89, col 73 of module UpdateCluster: 1027
+  line 89, col 8 to line 89, col 73 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 90, col 8 to line 90, col 30 of module UpdateCluster: 1027
+  line 90, col 8 to line 90, col 30 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 91, col 8 to line 91, col 76 of module UpdateCluster: 1027
+  line 91, col 8 to line 91, col 76 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<ApplyStart line 95, col 1 to line 95, col 13 of module UpdateCluster>: 703:1243
+<ApplyStart line 95, col 1 to line 95, col 13 of module UpdateCluster>: 702:1242
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 96, col 8 to line 96, col 33 of module UpdateCluster: 7062
+  line 96, col 8 to line 96, col 33 of module UpdateCluster: 7060
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  |line 96, col 8 to line 96, col 20 of module UpdateCluster: 5819
+  |line 96, col 8 to line 96, col 20 of module UpdateCluster: 5818
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 97, col 11 to line 97, col 33 of module UpdateCluster: 1243
+  line 97, col 11 to line 97, col 33 of module UpdateCluster: 1242
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 99, col 16 to line 99, col 21 of module UpdateCluster: 1027
+  line 99, col 16 to line 99, col 21 of module UpdateCluster: 1026
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
   line 101, col 24 to line 101, col 72 of module UpdateCluster: 816
@@ -308,13 +190,13 @@ The coverage statistics at 2020-04-16 19:59:17
   line 103, col 24 to line 103, col 100 of module UpdateCluster: 816
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 105, col 24 to line 105, col 47 of module UpdateCluster: 211
+  line 105, col 24 to line 105, col 47 of module UpdateCluster: 210
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 106, col 24 to line 106, col 85 of module UpdateCluster: 211
+  line 106, col 24 to line 106, col 85 of module UpdateCluster: 210
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
-  line 107, col 24 to line 107, col 92 of module UpdateCluster: 211
+  line 107, col 24 to line 107, col 92 of module UpdateCluster: 210
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
   line 109, col 16 to line 109, col 77 of module UpdateCluster: 216
@@ -326,7 +208,7 @@ The coverage statistics at 2020-04-16 19:59:17
   line 111, col 16 to line 111, col 84 of module UpdateCluster: 216
 @!@!@ENDMSG 2221 @!@!@
 @!@!@STARTMSG 2772:0 @!@!@
-<ApplyFinish line 118, col 1 to line 118, col 14 of module UpdateCluster>: 557:1632
+<ApplyFinish line 118, col 1 to line 118, col 14 of module UpdateCluster>: 559:1632
 @!@!@ENDMSG 2772 @!@!@
 @!@!@STARTMSG 2221:0 @!@!@
   line 119, col 8 to line 119, col 32 of module UpdateCluster: 6634
@@ -434,11 +316,17 @@ The coverage statistics at 2020-04-16 19:59:17
 End of statistics.
 @!@!@ENDMSG 2202 @!@!@
 @!@!@STARTMSG 2200:0 @!@!@
-Progress(16) at 2020-04-16 19:59:17: 6,332 states generated (187,152 s/min), 2,909 distinct states found (85,980 ds/min), 0 states left on queue.
+Progress(16) at 2020-04-16 19:58:37: 6,332 states generated (193,343 s/min), 2,909 distinct states found (88,824 ds/min), 0 states left on queue.
 @!@!@ENDMSG 2200 @!@!@
 @!@!@STARTMSG 2199:0 @!@!@
 6332 states generated, 2909 distinct states found, 0 states left on queue.
 @!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2194:0 @!@!@
+The depth of the complete state graph search is 16.
+@!@!@ENDMSG 2194 @!@!@
+@!@!@STARTMSG 2268:0 @!@!@
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 3).
+@!@!@ENDMSG 2268 @!@!@
 @!@!@STARTMSG 2186:0 @!@!@
-Finished in 2031ms at (2020-04-16 19:59:17)
+Finished in 1968ms at (2020-04-16 19:58:37)
 @!@!@ENDMSG 2186 @!@!@
