@@ -943,7 +943,7 @@
 \@x{ {\EXTENDS} Integers ,\, FiniteSets}%
 \@pvspace{8.0pt}%
 \@x{ {\CONSTANTS}}%
-\@x{\@s{16.4} \_Requests ,\,\@s{0.49}}%
+\@x{\@s{16.4} \_Requests ,\,}%
 \@y{\@s{0}%
  the requests sent by the user
 }%
@@ -963,7 +963,7 @@
 \@xx{}%
 \@x{\@s{16.4} toApply ,\,\@s{4.67}}%
 \@y{\@s{0}%
- the version to apply (last requets that passed the initial tests)
+ the version to apply (last request that passed the initial tests)
 }%
 \@xx{}%
 \@x{\@s{16.4} cluster ,\,\@s{9.23}}%
@@ -981,7 +981,7 @@
  the state of all workers
 }%
 \@xx{}%
-\@x{\@s{16.4} lock}%
+\@x{\@s{16.4} clusterUpdating}%
 \@y{\@s{0}%
  damn, I used a lock\.{\dots}
 }%
@@ -1005,7 +1005,7 @@
 \@xx{}%
 \@pvspace{8.0pt}%
  \@x{ vars \.{\defeq} {\langle} confOK ,\, reqCounter ,\, lastVOK ,\, toApply
- ,\, cluster ,\, requests ,\, workers ,\, lock {\rangle}}%
+ ,\, cluster ,\, requests ,\, workers ,\, clusterUpdating {\rangle}}%
 \@pvspace{8.0pt}%
 \@x{ TypeInvariants \.{\defeq}}%
 \@x{\@s{16.4} \.{\land} confOK \.{\in} {\BOOLEAN}}%
@@ -1013,7 +1013,7 @@
  won\mbox{'}t change for a specific behavior
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} lock \.{\in} {\BOOLEAN}}%
+\@x{\@s{16.4} \.{\land} clusterUpdating \.{\in} {\BOOLEAN}}%
 \@x{\@s{16.4} \.{\land} cluster . st \.{\in} \{}%
 \@x{\@s{31.61}\@w{idle} ,\,}%
 \@x{\@s{31.61}\@w{starting} ,\,}%
@@ -1066,7 +1066,7 @@ Initial State
 \@x{\@s{16.4} \.{\land} reqCounter \.{=} 0}%
 \@x{\@s{16.4} \.{\land} toApply \.{=} 0}%
 \@x{\@s{16.4} \.{\land} confOK \.{\in} {\BOOLEAN}}%
-\@x{\@s{16.4} \.{\land} lock \.{=} {\FALSE}}%
+\@x{\@s{16.4} \.{\land} clusterUpdating \.{=} {\FALSE}}%
 \@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1084,39 +1084,24 @@ Actions
  \@x{\@s{16.4} \.{\land} requests \.{'} \.{=} [ requests {\EXCEPT} {\bang} [ r
  ] . st \.{=}\@w{submitted} ,\, {\bang} [ r ] . v \.{=} newV ]}%
  \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVOK ,\, toApply
- ,\, cluster ,\, workers ,\, lock {\rangle}}%
-\@pvspace{16.0pt}%
-\@x{ Initialcheck ( r ) \.{\defeq}}%
-\@y{\@s{0}%
- request validation (auth, quotas\.{\dots})
-}%
-\@xx{}%
-\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{submitted}}%
-\@x{\@s{16.4} \.{\land} \E\, ok \.{\in} {\BOOLEAN} \.{:}}%
-\@x{\@s{31.61} {\IF} ok}%
-\@x{\@s{47.86} \.{\THEN}}%
- \@x{\@s{64.26} requests \.{'} \.{=} [ requests {\EXCEPT}\@s{4.1} {\bang} [ r
- ] . st \.{=}\@w{valid} ]}%
-\@x{\@s{47.86} \.{\ELSE}}%
- \@x{\@s{64.26} requests \.{'} \.{=} [ requests {\EXCEPT}\@s{4.1} {\bang} [ r
- ] . st \.{=}\@w{rejected} ]}%
- \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
- lastVOK ,\, toApply ,\, cluster ,\, workers ,\, lock {\rangle}}%
+ ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ PushToPending ( r ) \.{\defeq}}%
 \@y{\@s{0}%
  the request is pushed to queue
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{valid}}%
+\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{submitted}}%
 \@x{\@s{16.4} \.{\land} {\IF} toApply \.{<} requests [ r ] . v}%
-\@x{\@s{31.61} \.{\THEN} \.{\land} toApply \.{'} \.{=} requests [ r ] . v}%
+ \@x{\@s{31.61} \.{\THEN} \.{\land} requests \.{'} \.{=} [ requests
+ {\EXCEPT}\@s{4.1} {\bang} [ r ] . st \.{=}\@w{valid} ]}%
+\@x{\@s{62.92} \.{\land} toApply \.{'} \.{=} requests [ r ] . v}%
  \@x{\@s{62.92} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
- lastVOK ,\, cluster ,\, requests ,\, workers ,\, lock {\rangle}}%
+ lastVOK ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
  \@x{\@s{31.61} \.{\ELSE} \.{\land} requests \.{'} \.{=} [ requests {\EXCEPT}
  {\bang} [ r ] . st \.{=}\@w{rejected} ]}%
  \@x{\@s{62.92} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
- lastVOK ,\, toApply ,\, cluster ,\, workers ,\, lock {\rangle}}%
+ lastVOK ,\, toApply ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ SpawnWorker ( w ) \.{\defeq}}%
 \@y{\@s{0}%
@@ -1125,12 +1110,12 @@ Actions
 \@xx{}%
 \@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{waiting}}%
 \@x{\@s{16.4} \.{\land} toApply \.{\neq} lastVOK}%
-\@x{\@s{16.4} \.{\land} lock \.{=} {\FALSE}}%
+\@x{\@s{16.4} \.{\land} clusterUpdating \.{=} {\FALSE}}%
 \@x{\@s{16.4} \.{\land}\@s{4.1} \.{\lor} cluster . st \.{=}\@w{idle}}%
 \@x{\@s{31.61} \.{\lor} cluster . st \.{=}\@w{failed}}%
  \@x{\@s{16.4} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w ]
  . v \.{=} toApply ,\, {\bang} [ w ] . st \.{=}\@w{starting} ]}%
-\@x{\@s{16.4} \.{\land} lock \.{'} \.{=} {\TRUE}}%
+\@x{\@s{16.4} \.{\land} clusterUpdating \.{'} \.{=} {\TRUE}}%
  \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
  lastVOK ,\, toApply ,\, requests ,\, cluster {\rangle}}%
 \@pvspace{24.0pt}%
@@ -1149,9 +1134,9 @@ Actions
  \@x{\@s{80.66} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
  ] . st \.{=}\@w{working} ]}%
  \@x{\@s{80.66} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
- lastVOK ,\, toApply ,\, requests ,\, lock {\rangle}}%
+ lastVOK ,\, toApply ,\, requests ,\, clusterUpdating {\rangle}}%
 \@x{\@s{64.26} \.{\ELSE}}%
-\@x{\@s{80.66} \.{\land} lock \.{'} \.{=} {\FALSE}}%
+\@x{\@s{80.66} \.{\land} clusterUpdating \.{'} \.{=} {\FALSE}}%
  \@x{\@s{80.66} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
  ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
  \@x{\@s{80.66} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
@@ -1163,15 +1148,16 @@ Actions
 \@xx{}%
  \@x{\@s{48.01} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
  ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
-\@x{\@s{48.01} \.{\land} lock \.{'} \.{=} {\FALSE}}%
+\@x{\@s{48.01} \.{\land} clusterUpdating \.{'} \.{=} {\FALSE}}%
  \@x{\@s{48.01} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
  lastVOK ,\, toApply ,\, cluster ,\, requests {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ RollbackVersion \.{\defeq}}%
 \@x{\@s{16.4}}%
 \@y{\@s{0}%
- to differenciate it from the original last \ensuremath{VOK
-}}%
+ to differenciate it from the original last \ensuremath{VOK} (in realworld,
+ could be \ensuremath{conf \.{+}} timestamp)
+}%
 \@xx{}%
 \@x{\@s{16.4} lastVOK \.{+} 10}%
 \@pvspace{8.0pt}%
@@ -1181,8 +1167,8 @@ Actions
 }%
 \@xx{}%
 \@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{working}}%
-\@x{\@s{16.4} \.{\land} lock \.{'} \.{=} {\FALSE}}%
-\@x{\@s{16.4} \.{\land} \E\, ok\@s{2.22} \.{\in} {\BOOLEAN} \.{:}}%
+\@x{\@s{16.4} \.{\land} clusterUpdating \.{'} \.{=} {\FALSE}}%
+\@x{\@s{16.4} \.{\land} \E\, ok \.{\in} {\BOOLEAN} \.{:}}%
  \@x{\@s{31.61} {\IF} ok \.{\lor} workers [ w ] . v \.{=}
  RollbackVersion\@s{4.1}}%
 \@y{\@s{0}%
@@ -1247,7 +1233,6 @@ Spec
 \@x{ Next \.{\defeq}}%
 \@x{\@s{16.4} \.{\lor} \E\, r \.{\in} \_Requests \.{:}}%
 \@x{\@s{40.02} \.{\lor} Submit ( r )}%
-\@x{\@s{40.02} \.{\lor} Initialcheck ( r )}%
 \@x{\@s{40.02} \.{\lor} PushToPending ( r )}%
 \@x{\@s{16.4} \.{\lor} \E\, w \.{\in} \_Workers \.{:}}%
 \@x{\@s{42.45} \.{\lor} SpawnWorker ( w )}%
@@ -1257,7 +1242,6 @@ Spec
  \@x{ Fairness \.{\defeq} \A\, r \.{\in} \_Requests ,\, w \.{\in} \_Workers
  \.{:}}%
 \@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( Submit ( r ) )}%
-\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( Initialcheck ( r ) )}%
 \@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( PushToPending ( r ) )}%
 \@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( SpawnWorker ( w ) )}%
 \@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( ApplyStart ( w ) )}%
