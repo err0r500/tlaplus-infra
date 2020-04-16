@@ -2,39 +2,50 @@
 EXTENDS Integers, FiniteSets
 
 
-CONSTANT  
-    Reqs, \* the requests sent by the user
+CONSTANTS  
+    _Requests, \* the requests sent by the user
+    _Workers, \* the pool of workers
     NULL
 
 
 VARIABLES 
-    queue,
     confOK, \* are we able to get a valid conf ? 
-    lastRank, \* last cluster submission rank
-    clusterState, \* last cluster fully deployed 
-    reqState \* the state of all requests (reqState[req]) 
-vars == <<confOK, clusterState, reqState, queue, lastRank>>
-
-
-NoConcurrentUpdate == 
-    Cardinality({r \in DOMAIN reqState: reqState[r].status = "partial"}) < 2
+    lastVSubmitted, \* just to keep track of the order of submissions 
+    lastVOK, \* last v where the cluster was fully applied (used by rollback)
+    toApply, \* the version to apply (lastVsubmitted that passed the initial tests)
+    cluster, \* last cluster fully deployed 
+    requests, \* the st of all requests (requests[req]) 
+    workers,
+    lock
+vars == <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests, workers, lock>>
 
 
 TypeInvariants == 
-  /\ confOK \in BOOLEAN \* won't change for a specific behavior
-  /\ NoConcurrentUpdate
-  /\ \A r \in Reqs : reqState[r].status \in {
-    "waiting", \* the request (req) hasn't been submitted yet
-    "submitted", \* req has been submitted
-    "rejected", \* req has been rejected (auth problem)
-    "valid", \* auth etc passed 
-    "processing", \* the processing of the req has started
-    "partial", \* req is partially applied (the infra is partially modified)
-    "partialFailure", \* req failed in the middle of an application
-    "success", \* req has been sucessfully applied
-    "failure", \* the req failed before modifying the cluster
-    "rolledback" \* the req has been rolledback
-    }
+    /\ confOK \in BOOLEAN \* won't change for a specific behavior
+    /\ lock \in BOOLEAN
+    /\ cluster.st \in {
+        "idle", 
+        "starting",
+        "partial", 
+        "failed" 
+        }
+    /\ \A r \in _Requests : requests[r].st \in {
+        "waiting", \* the request (req) hasn't been submitted yet
+        "submitted", \* req has been submitted
+        "rejected", \* req has been rejected (auth problem)
+        "valid", \* auth etc passed 
+        "processing", \* the processing of the req has started
+        "partial", \* req is partially applied (the infra is partially modified)
+        "partialFailure", \* req failed in the middle of an application
+        "success", \* req has been sucessfully applied
+        "failure", \* the req failed before modifying the cluster
+        "rolledback" \* the req has been rolledback
+        }
+    /\ \A w \in _Workers : workers[w].st \in {
+        "waiting", 
+        "starting",
+        "working"
+        }
 
 
 
@@ -42,11 +53,14 @@ TypeInvariants ==
 (* Initial State                                                           *)
 (***************************************************************************)
 Init == 
-    /\ reqState = [r \in Reqs |-> [status |-> "waiting", rank |-> NULL]]
-    /\ clusterState = [req |-> NULL, complete |-> TRUE] 
-    /\ lastRank = 0
+    /\ requests = [r \in _Requests |-> [st |-> "waiting", v |-> NULL]]
+    /\ workers = [w \in _Workers |-> [st |-> "waiting", v |-> NULL]] 
+    /\ cluster = [v |-> 0, st |-> "idle"]
+    /\ lastVOK = 0 
+    /\ lastVSubmitted = 0
+    /\ toApply = 0 
     /\ confOK \in BOOLEAN
-    /\ queue = {}
+    /\ lock = FALSE
 
 
 
@@ -54,121 +68,134 @@ Init ==
 (* Actions                                                                 *)
 (***************************************************************************)
 Submit(r) == \* update request received from the user 
-    LET currSubmitRank == lastRank + 1 IN
-    /\ reqState[r].status = "waiting"
-    /\ lastRank' = currSubmitRank
-    /\ reqState' = [reqState EXCEPT ![r].status = "submitted", ![r].rank = currSubmitRank]
-    /\ UNCHANGED <<confOK, queue, clusterState>>
+    LET newV == lastVSubmitted + 1 IN
+    /\ requests[r].st = "waiting"
+    /\ lastVSubmitted' = newV
+    /\ requests' = [requests EXCEPT ![r].st = "submitted", ![r].v = newV]
+    /\ UNCHANGED <<confOK, lastVOK, toApply, cluster, workers, lock>>
 
 
 Initialcheck(r) == \* request validation (auth, quotas...)
-    /\ reqState[r].status = "submitted"
+    /\ requests[r].st = "submitted"
     /\ \E ok \in BOOLEAN: 
         IF ok
             THEN  
-                reqState' = [reqState EXCEPT  ![r].status = "valid"]
+                requests' = [requests EXCEPT  ![r].st = "valid"]
             ELSE 
-                reqState' = [reqState EXCEPT  ![r].status = "rejected"]
-    /\ UNCHANGED <<confOK, queue, clusterState, lastRank>> 
+                requests' = [requests EXCEPT  ![r].st = "rejected"]
+    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, workers, lock>>
 
 
-PushToQueue(r) == \* the request is pushed to queue
-    /\ reqState[r].status = "valid"
-    /\ queue' = queue \union {r} 
-    /\ UNCHANGED <<confOK, reqState, clusterState, lastRank>> 
+PushToPending(r) == \* the request is pushed to queue
+    /\ requests[r].st = "valid"
+    /\ IF toApply < requests[r].v
+        THEN /\ toApply' = requests[r].v
+             /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, cluster, requests, workers, lock>>
+        ELSE /\ requests' = [requests EXCEPT ![r].st = "rejected"]
+             /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, workers, lock>>
 
 
-ProcessQueue ==  \* a request in queue is processed (order of submission not took into account)
-    /\ queue /= {}
-    /\ \E r \in queue :
-        /\ queue' = queue \ {r}
-        /\ reqState' =  [reqState EXCEPT ![r].status = "processing"]
-        /\ UNCHANGED <<confOK, clusterState, lastRank>> 
-
-
-StartApply(r) == \* the cluster starts to be modified
-    /\ reqState[r].rank = lastRank
-    /\ reqState[r].status = "processing"
-    /\ clusterState.complete = TRUE
-    /\ ~\E x \in DOMAIN reqState: reqState[x].status = "partial" \* don't attempt if an attempt is already on-going
-    /\ IF confOK 
+SpawnWorker(w) == \* spawns a new worker
+    /\ workers[w].st = "waiting"
+    /\ lock = FALSE
+    /\  \/ cluster.st = "idle"
+        \/ cluster.st = "failed"
+    /\ IF cluster.st = "idle" 
         THEN 
-            /\ reqState' = [reqState EXCEPT ![r].status = "partial"] 
-            /\ clusterState' = [req |-> r, complete |-> FALSE]
-            /\ UNCHANGED <<confOK, lastRank, queue>> 
-        ELSE 
-            /\ reqState' = [reqState EXCEPT ![r].status = "failure"]
-            /\ UNCHANGED <<confOK, clusterState, lastRank, queue>> 
-
-
-CompleteApply(r) == \* the cluster update finishes
-    /\ reqState[r].status = "partial"
-    /\ \E ok \in BOOLEAN : 
-        IF ok 
-            THEN 
-                /\ reqState' = [reqState EXCEPT ![r].status = "success"] 
-                /\ clusterState' =  [clusterState EXCEPT !.req = r, !.complete = TRUE]
-                /\ UNCHANGED <<confOK, lastRank, queue>> 
-            ELSE
-                /\ reqState' = [reqState EXCEPT ![r].status = "partialFailure"] 
-                /\ UNCHANGED <<confOK, clusterState, lastRank, queue>> 
-
-
-Rollback(r) == \*we assume rollback always works if confOK (ie we shouldn’t have to rollback if conf not OK )
-    /\ reqState[r ].status = "partialFailure"
-    /\ IF confOK
-        THEN
-            /\ reqState' = [reqState EXCEPT ![r].status = "rolledback"]
-            /\ clusterState' = [clusterState EXCEPT !.complete = TRUE]
-            /\ UNCHANGED <<confOK , lastRank , queue>>
+            /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
         ELSE
-            UNCHANGED vars
-            
+            /\ workers' = [workers EXCEPT ![w].v = lastVOK, ![w].st = "starting"]
+    /\ lock' = TRUE
+    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests, cluster>> 
+    
+
+
+ApplyStart(w) == \* the cluster starts to be modified
+    /\ workers[w].st = "starting"
+    /\ IF \/ workers[w].v = lastVSubmitted 
+          \/ workers[w].v = lastVOK \* rollingback
+        THEN 
+            IF confOK 
+                THEN 
+                    /\ cluster' = [v |-> workers[w].v, st |-> "partial"]
+                    /\ workers' = [workers EXCEPT ![w].st = "working"]
+                    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests, lock>>
+                ELSE 
+                    /\ lock' = FALSE
+                    /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
+                    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests>>       
+        ELSE
+            /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
+            /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests, lock>>
+    
+    
+ApplyFinish(w) == \* the cluster update finishes
+    /\ workers[w].st = "working"
+    /\ lock' = FALSE
+    /\ \E ok \in BOOLEAN : 
+        IF ok \/ workers[w].v = lastVOK  \* rollback always works
+            THEN 
+                /\ cluster' =  [cluster EXCEPT !.st = "idle"]
+                /\ lastVOK' = workers[w].v
+                /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
+                /\ UNCHANGED <<confOK, lastVSubmitted, toApply, requests>>
+            ELSE
+                /\ cluster' =  [cluster EXCEPT !.st = "failed"]
+                /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
+                /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests>>
             
             
 (***************************************************************************)
 (* Requirements                                                            *)
 (***************************************************************************)
-NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update state
-    <>[](clusterState.complete = TRUE)
+NoConcurrentUpdate == 
+    [](Cardinality({r \in DOMAIN requests: requests[r].st = "working"}) < 2)
     
-    
-NoApplicationOfOutdatedReq == \* we don’t want transition updates of successive requests
-    []({r \in DOMAIN reqState: ENABLED StartApply(r) /\ reqState[r].rank /= lastRank} = {})
-    
-    
-EveryReqInQueueIsProcessed == \* we don’t want messages to stay in queue
-    <>[](queue = {})
+NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
+    <>[](cluster.st = "idle")
 
-
+EveryReqIsProcessed ==
+    <>[](~\E r \in _Requests: requests[r].st = "waiting")
+    
+    
 
 (***************************************************************************)
 (* Spec                                                                    *)
 (***************************************************************************)
-Fairness == 
-    \A r \in Reqs : 
-        /\ WF_vars(PushToQueue(r))
-        /\ WF_vars(ProcessQueue)
-        /\ WF_vars(CompleteApply(r))
-        /\ WF_vars(Rollback(r))
+
         
         
-Next == 
-    ProcessQueue \/ 
-    \E r \in Reqs : 
-        \/ Submit(r) \/ Initialcheck(r)
-        \/ PushToQueue(r)
-        \/ StartApply(r) \/ CompleteApply(r)
-        \/ Rollback(r)
+Next ==
+    \/ \E r \in _Requests : 
+            \/ Submit(r) 
+            \/ Initialcheck(r) 
+            \/ PushToPending(r)
+    \/ \E w \in _Workers:
+            \/ SpawnWorker(w)
+            \/ ApplyStart(w) 
+            \/ ApplyFinish(w)
+
+
+Fairness == \A r \in _Requests, w \in _Workers : 
+                /\ WF_vars(Submit(r)) 
+                /\ WF_vars(Initialcheck(r)) 
+                /\ WF_vars(PushToPending(r))
+                /\ WF_vars(SpawnWorker(w)) 
+                /\ WF_vars(ApplyStart(w)) 
+                /\ WF_vars(ApplyFinish(w))
 
 
 Spec == 
-  /\ Init /\ [][Next]_vars /\ Fairness
+  /\ Init 
+  /\ [][Next]_vars 
+  /\ Fairness
+
+
 
 
 THEOREM Spec => [](TypeInvariants)
 THEOREM Spec => NoPartialUpdateTermination
-THEOREM Spec => NoApplicationOfOutdatedReq
-THEOREM Spec => EveryReqInQueueIsProcessed
+\*THEOREM Spec => NoApplicationOfOutdatedReq
+\*THEOREM Spec => EveryReqInQueueIsProcessed
 
 =====

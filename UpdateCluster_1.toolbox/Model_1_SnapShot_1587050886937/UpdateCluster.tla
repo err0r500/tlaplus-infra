@@ -2,7 +2,7 @@
 EXTENDS Integers, FiniteSets
 
 
-CONSTANTS  
+CONSTANT  
     _Requests, \* the requests sent by the user
     _Workers, \* the pool of workers
     NULL

@@ -942,103 +942,128 @@
 \@x{}\moduleLeftDash\@xx{ {\MODULE} UpdateCluster}\moduleRightDash\@xx{}%
 \@x{ {\EXTENDS} Integers ,\, FiniteSets}%
 \@pvspace{16.0pt}%
-\@x{ {\CONSTANT}}%
-\@x{\@s{16.4} Reqs ,\,}%
+\@x{ {\CONSTANTS}}%
+\@x{\@s{16.4} \_Requests ,\,}%
 \@y{\@s{0}%
  the requests sent by the user
+}%
+\@xx{}%
+\@x{\@s{16.4} \_Workers ,\,}%
+\@y{\@s{0}%
+ the pool of workers
 }%
 \@xx{}%
 \@x{\@s{16.4} NULL}%
 \@pvspace{16.0pt}%
 \@x{ {\VARIABLES}}%
-\@x{\@s{16.4} queue ,\,}%
 \@x{\@s{16.4} confOK ,\,}%
 \@y{\@s{0}%
  are we able to get a valid conf \.{?}
 }%
 \@xx{}%
-\@x{\@s{16.4} lastSubmitted ,\,}%
+\@x{\@s{16.4} lastVSubmitted ,\,}%
 \@y{\@s{0}%
- last cluster submitted
+ just to keep track of the order of submissions
 }%
 \@xx{}%
-\@x{\@s{16.4} clusterState ,\,}%
+\@x{\@s{16.4} lastVOK ,\,}%
+\@y{\@s{0}%
+ last \ensuremath{v} where the cluster was fully applied (used by rollback)
+}%
+\@xx{}%
+\@x{\@s{16.4} toApply ,\,\@s{4.67}}%
+\@y{\@s{0}%
+ the version to apply (\ensuremath{lastVsubmitted} that passed the initial
+ tests)
+}%
+\@xx{}%
+\@x{\@s{16.4} cluster ,\,\@s{9.23}}%
 \@y{\@s{0}%
  last cluster fully deployed
 }%
 \@xx{}%
-\@x{\@s{16.4} reqState}%
+\@x{\@s{16.4} requests ,\,}%
 \@y{\@s{0}%
- the state of all requests (\ensuremath{reqState[req]})
+ the \ensuremath{st} of all requests (\ensuremath{requests[req]})
 }%
 \@xx{}%
- \@x{ vars \.{\defeq} {\langle} confOK ,\, clusterState ,\, reqState ,\, queue
- ,\, lastSubmitted {\rangle}}%
-\@pvspace{16.0pt}%
-\@x{ NoConcurrentUpdate \.{\defeq}}%
- \@x{\@s{16.4} Cardinality ( \{ r \.{\in} {\DOMAIN} reqState \.{:} reqState [
- r ] . status \.{=}\@w{partial} \} ) \.{<} 2}%
+\@x{\@s{16.4} workers ,\,}%
+\@x{\@s{16.4} lock}%
+ \@x{ vars \.{\defeq} {\langle} confOK ,\, lastVSubmitted ,\, lastVOK ,\,
+ toApply ,\, cluster ,\, requests ,\, workers ,\, lock {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ TypeInvariants \.{\defeq}}%
-\@x{\@s{8.2} \.{\land} confOK \.{\in} {\BOOLEAN}}%
+\@x{\@s{16.4} \.{\land} confOK \.{\in} {\BOOLEAN}}%
 \@y{\@s{0}%
  won\mbox{'}t change for a specific behavior
 }%
 \@xx{}%
-\@x{\@s{8.2} \.{\land} NoConcurrentUpdate}%
- \@x{\@s{8.2} \.{\land} \A\, r \.{\in} Reqs \.{:} reqState [ r ] . status
+\@x{\@s{16.4} \.{\land} lock \.{\in} {\BOOLEAN}}%
+\@x{\@s{16.4} \.{\land} cluster . st \.{\in} \{}%
+\@x{\@s{31.61}\@w{idle} ,\,}%
+\@x{\@s{31.61}\@w{starting} ,\,}%
+\@x{\@s{31.61}\@w{partial} ,\,}%
+\@x{\@s{31.61}\@w{failed}}%
+\@x{\@s{31.61} \}}%
+ \@x{\@s{16.4} \.{\land} \A\, r \.{\in} \_Requests \.{:} requests [ r ] . st
  \.{\in} \{}%
-\@x{\@s{16.4}\@w{waiting} ,\,}%
+\@x{\@s{31.61}\@w{waiting} ,\,}%
 \@y{\@s{0}%
- the request (\ensuremath{req}) hasn\mbox{'}t been submitted yet
+ the request (req) hasn\mbox{'}t been submitted yet
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{submitted} ,\,}%
+\@x{\@s{31.61}\@w{submitted} ,\,}%
 \@y{\@s{0}%
- \ensuremath{req} has been submitted
+ req has been submitted
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{rejected} ,\,}%
+\@x{\@s{31.61}\@w{rejected} ,\,}%
 \@y{\@s{0}%
- \ensuremath{req} has been rejected (auth problem)
+ req has been rejected (auth problem)
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{valid} ,\,}%
+\@x{\@s{31.61}\@w{valid} ,\,}%
 \@y{\@s{0}%
  auth etc passed
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{processing} ,\,}%
+\@x{\@s{31.61}\@w{processing} ,\,}%
 \@y{\@s{0}%
- the processing of the \ensuremath{req} has started
+ the processing of the req has started
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{partial} ,\,}%
+\@x{\@s{31.61}\@w{partial} ,\,}%
 \@y{\@s{0}%
- \ensuremath{req} is partially applied (the infra is partially modified)
+ req is partially applied (the infra is partially modified)
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{partialFailure} ,\,}%
+\@x{\@s{31.61}\@w{partialFailure} ,\,}%
 \@y{\@s{0}%
- \ensuremath{req} failed in the middle of an application
+ req failed in the middle of an application
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{success} ,\,}%
+\@x{\@s{31.61}\@w{success} ,\,}%
 \@y{\@s{0}%
- \ensuremath{req} has been sucessfully applied
+ req has been sucessfully applied
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{failure} ,\,\@s{4.33}}%
+\@x{\@s{31.61}\@w{failure} ,\,\@s{4.33}}%
 \@y{\@s{0}%
- the \ensuremath{req} failed before modifying the cluster
+ the req failed before modifying the cluster
 }%
 \@xx{}%
-\@x{\@s{16.4}\@w{rolledback}}%
+\@x{\@s{31.61}\@w{rolledback}}%
 \@y{\@s{0}%
- the \ensuremath{req} has been \ensuremath{rolledback
+ the req has been \ensuremath{rolledback
 }}%
 \@xx{}%
-\@x{\@s{16.4} \}}%
+\@x{\@s{31.61} \}}%
+ \@x{\@s{16.4} \.{\land} \A\, w \.{\in} \_Workers \.{:} workers [ w ] . st
+ \.{\in} \{}%
+\@x{\@s{31.61}\@w{waiting} ,\,}%
+\@x{\@s{31.61}\@w{starting} ,\,}%
+\@x{\@s{31.61}\@w{working}}%
+\@x{\@s{31.61} \}}%
 \@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1046,13 +1071,17 @@ Initial State
 \end{cpar}%
 \end{lcom}%
 \@x{ Init \.{\defeq}}%
- \@x{\@s{16.4} \.{\land} reqState \.{=} [ r \.{\in} Reqs \.{\mapsto} [ status
- \.{\mapsto}\@w{waiting} ,\, rank \.{\mapsto} NULL ] ]}%
- \@x{\@s{16.4} \.{\land} clusterState \.{=} [ req \.{\mapsto} NULL ,\,
- complete \.{\mapsto} {\TRUE} ]}%
-\@x{\@s{16.4} \.{\land} lastSubmitted \.{=} 0}%
+ \@x{\@s{16.4} \.{\land} requests \.{=} [ r \.{\in} \_Requests \.{\mapsto} [
+ st \.{\mapsto}\@w{waiting} ,\, v \.{\mapsto} NULL ] ]}%
+ \@x{\@s{16.4} \.{\land} workers\@s{4.76} \.{=} [ w \.{\in} \_Workers
+ \.{\mapsto} [ st \.{\mapsto}\@w{waiting} ,\, v \.{\mapsto} NULL ] ]}%
+ \@x{\@s{16.4} \.{\land} cluster\@s{9.23} \.{=} [ v \.{\mapsto} 0 ,\, st
+ \.{\mapsto}\@w{idle} ]}%
+\@x{\@s{16.4} \.{\land} lastVOK \.{=} 0}%
+\@x{\@s{16.4} \.{\land} lastVSubmitted \.{=} 0}%
+\@x{\@s{16.4} \.{\land} toApply \.{=} 0}%
 \@x{\@s{16.4} \.{\land} confOK \.{\in} {\BOOLEAN}}%
-\@x{\@s{16.4} \.{\land} queue \.{=} \{ \}}%
+\@x{\@s{16.4} \.{\land} lock \.{=} {\FALSE}}%
 \@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
@@ -1064,179 +1093,193 @@ Actions
  update request received from the user
 }%
 \@xx{}%
- \@x{\@s{16.4} \.{\LET} currSubmitRank \.{\defeq} lastSubmitted \.{+} 1
- \.{\IN}}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{waiting}}%
-\@x{\@s{16.4} \.{\land} lastSubmitted \.{'} \.{=} currSubmitRank}%
- \@x{\@s{16.4} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [ r
- ] . status \.{=}\@w{submitted} ,\, {\bang} [ r ] . rank \.{=} currSubmitRank
- ]}%
- \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, queue ,\,
- clusterState {\rangle}}%
+\@x{\@s{16.4} \.{\LET} newV \.{\defeq} lastVSubmitted \.{+} 1 \.{\IN}}%
+\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{waiting}}%
+\@x{\@s{16.4} \.{\land} lastVSubmitted \.{'} \.{=} newV}%
+ \@x{\@s{16.4} \.{\land} requests \.{'} \.{=} [ requests {\EXCEPT} {\bang} [ r
+ ] . st \.{=}\@w{submitted} ,\, {\bang} [ r ] . v \.{=} newV ]}%
+ \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVOK ,\, toApply
+ ,\, cluster ,\, workers ,\, lock {\rangle}}%
 \@pvspace{16.0pt}%
 \@x{ Initialcheck ( r ) \.{\defeq}}%
 \@y{\@s{0}%
  request validation (auth, quotas\.{\dots})
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{submitted}}%
+\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{submitted}}%
 \@x{\@s{16.4} \.{\land} \E\, ok \.{\in} {\BOOLEAN} \.{:}}%
 \@x{\@s{31.61} {\IF} ok}%
 \@x{\@s{47.86} \.{\THEN}}%
- \@x{\@s{64.26} reqState \.{'} \.{=} [ reqState {\EXCEPT}\@s{4.1} {\bang} [ r
- ] . status \.{=}\@w{valid} ]}%
+ \@x{\@s{64.26} requests \.{'} \.{=} [ requests {\EXCEPT}\@s{4.1} {\bang} [ r
+ ] . st \.{=}\@w{valid} ]}%
 \@x{\@s{47.86} \.{\ELSE}}%
- \@x{\@s{64.26} reqState \.{'} \.{=} [ reqState {\EXCEPT}\@s{4.1} {\bang} [ r
- ] . status \.{=}\@w{rejected} ]}%
- \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, queue ,\,
- clusterState ,\, lastSubmitted {\rangle}}%
+ \@x{\@s{64.26} requests \.{'} \.{=} [ requests {\EXCEPT}\@s{4.1} {\bang} [ r
+ ] . st \.{=}\@w{rejected} ]}%
+ \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, cluster ,\, workers ,\, lock {\rangle}}%
 \@pvspace{16.0pt}%
-\@x{ PushToQueue ( r ) \.{\defeq}}%
+\@x{ PushToPending ( r ) \.{\defeq}}%
 \@y{\@s{0}%
  the request is pushed to queue
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{valid}}%
-\@x{\@s{16.4} \.{\land} queue \.{'} \.{=} queue \.{\cup} \{ r \}}%
- \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqState ,\,
- clusterState ,\, lastSubmitted {\rangle}}%
+\@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{valid}}%
+\@x{\@s{16.4} \.{\land} {\IF} toApply \.{<} requests [ r ] . v}%
+\@x{\@s{31.61} \.{\THEN} \.{\land} toApply \.{'} \.{=} requests [ r ] . v}%
+ \@x{\@s{62.92} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, cluster ,\, requests ,\, workers ,\, lock {\rangle}}%
+ \@x{\@s{31.61} \.{\ELSE} \.{\land} requests \.{'} \.{=} [ requests {\EXCEPT}
+ {\bang} [ r ] . st \.{=}\@w{rejected} ]}%
+ \@x{\@s{62.92} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, cluster ,\, workers ,\, lock {\rangle}}%
 \@pvspace{16.0pt}%
-\@x{ ProcessQueue \.{\defeq}\@s{4.1}}%
+\@x{ SpawnWorker ( w ) \.{\defeq}}%
 \@y{\@s{0}%
- a request in queue is processed (order of submission not took into account)
+ spawns a new worker
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} queue \.{\neq} \{ \}}%
-\@x{\@s{16.4} \.{\land} \E\, r \.{\in} queue \.{:}}%
-\@x{\@s{31.61} \.{\land} queue \.{'} \.{=} queue \.{\,\backslash\,} \{ r \}}%
- \@x{\@s{31.61} \.{\land} reqState \.{'} \.{=}\@s{4.1} [ reqState {\EXCEPT}
- {\bang} [ r ] . status \.{=}\@w{processing} ]}%
- \@x{\@s{31.61} \.{\land} {\UNCHANGED} {\langle} confOK ,\, clusterState ,\,
- lastSubmitted {\rangle}}%
-\@pvspace{16.0pt}%
-\@x{ StartApply ( r ) \.{\defeq}}%
+\@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{waiting}}%
+\@x{\@s{16.4} \.{\land} lock \.{=} {\FALSE}}%
+\@x{\@s{16.4} \.{\land}\@s{4.1} \.{\lor} cluster . st \.{=}\@w{idle}}%
+\@x{\@s{31.61} \.{\lor} cluster . st \.{=}\@w{failed}}%
+\@x{\@s{16.4} \.{\land} {\IF} cluster . st \.{=}\@w{idle}}%
+\@x{\@s{31.61} \.{\THEN}}%
+ \@x{\@s{48.01} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . v \.{=} toApply ,\, {\bang} [ w ] . st \.{=}\@w{starting} ]}%
+\@x{\@s{31.61} \.{\ELSE}}%
+ \@x{\@s{48.01} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . v \.{=} lastVOK ,\, {\bang} [ w ] . st \.{=}\@w{starting} ]}%
+\@x{\@s{16.4} \.{\land} lock \.{'} \.{=} {\TRUE}}%
+ \@x{\@s{16.4} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, requests ,\, cluster {\rangle}}%
+\@pvspace{24.0pt}%
+\@x{ ApplyStart ( w ) \.{\defeq}}%
 \@y{\@s{0}%
  the cluster starts to be modified
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . rank \.{=} lastSubmitted}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{processing}}%
-\@x{\@s{16.4} \.{\land} clusterState . complete \.{=} {\TRUE}}%
- \@x{\@s{16.4} \.{\land} {\lnot} \E\, x \.{\in} {\DOMAIN} reqState \.{:}
- reqState [ x ] . status \.{=}\@w{partial}}%
+\@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{starting}}%
+ \@x{\@s{16.4} \.{\land} {\IF} \.{\lor} workers [ w ] . v \.{=}
+ lastVSubmitted}%
+\@x{\@s{39.66} \.{\lor} workers [ w ] . v \.{=} lastVOK}%
 \@y{\@s{0}%
- don\mbox{'}t attempt if an attempt is already on-going
+ rollingback
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} {\IF} confOK}%
 \@x{\@s{31.61} \.{\THEN}}%
- \@x{\@s{48.01} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [
- r ] . status \.{=}\@w{partial} ]}%
- \@x{\@s{48.01} \.{\land} clusterState \.{'} \.{=} [ req \.{\mapsto} r ,\,
- complete \.{\mapsto} {\FALSE} ]}%
- \@x{\@s{48.01} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastSubmitted ,\,
- queue {\rangle}}%
+\@x{\@s{48.01} {\IF} confOK}%
+\@x{\@s{64.26} \.{\THEN}}%
+ \@x{\@s{80.66} \.{\land} cluster \.{'}\@s{4.47} \.{=} [ v \.{\mapsto} workers
+ [ w ] . v ,\, st \.{\mapsto}\@w{partial} ]}%
+ \@x{\@s{80.66} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . st \.{=}\@w{working} ]}%
+ \@x{\@s{80.66} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, requests ,\, lock {\rangle}}%
+\@x{\@s{64.26} \.{\ELSE}}%
+\@x{\@s{80.66} \.{\land} lock \.{'} \.{=} {\FALSE}}%
+ \@x{\@s{80.66} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
+ \@x{\@s{80.66} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, cluster ,\, requests {\rangle}}%
 \@x{\@s{31.61} \.{\ELSE}}%
- \@x{\@s{48.01} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [
- r ] . status \.{=}\@w{failure} ]}%
- \@x{\@s{48.01} \.{\land} {\UNCHANGED} {\langle} confOK ,\, clusterState ,\,
- lastSubmitted ,\, queue {\rangle}}%
+ \@x{\@s{48.01} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
+ \@x{\@s{48.01} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, cluster ,\, requests ,\, lock {\rangle}}%
 \@pvspace{16.0pt}%
-\@x{ CompleteApply ( r ) \.{\defeq}}%
+\@x{ ApplyFinish ( w ) \.{\defeq}}%
 \@y{\@s{0}%
  the cluster update finishes
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{partial}}%
-\@x{\@s{16.4} \.{\land} \E\, ok \.{\in} {\BOOLEAN} \.{:}}%
-\@x{\@s{31.61} {\IF} ok}%
-\@x{\@s{47.86} \.{\THEN}}%
- \@x{\@s{64.26} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [
- r ] . status \.{=}\@w{success} ]}%
- \@x{\@s{64.26} \.{\land} clusterState \.{'} \.{=}\@s{4.1} [ clusterState
- {\EXCEPT} {\bang} . req \.{=} r ,\, {\bang} . complete \.{=} {\TRUE} ]}%
- \@x{\@s{64.26} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastSubmitted ,\,
- queue {\rangle}}%
-\@x{\@s{47.86} \.{\ELSE}}%
- \@x{\@s{64.26} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [
- r ] . status \.{=}\@w{partialFailure} ]}%
- \@x{\@s{64.26} \.{\land} {\UNCHANGED} {\langle} confOK ,\, clusterState ,\,
- lastSubmitted ,\, queue {\rangle}}%
-\@pvspace{16.0pt}%
-\@x{ Rollback ( r ) \.{\defeq}}%
-\@y{%
- we assume rollback always works if \ensuremath{confOK} (ie we shouldn’t have
- to rollback if conf not \ensuremath{OK} )
+\@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{working}}%
+\@x{\@s{16.4} \.{\land} lock \.{'} \.{=} {\FALSE}}%
+\@x{\@s{16.4} \.{\land} \E\, ok\@s{2.22} \.{\in} {\BOOLEAN} \.{:}}%
+\@x{\@s{31.61} {\IF} ok \.{\lor} workers [ w ] . v \.{=} lastVOK\@s{4.1}}%
+\@y{\@s{0}%
+ rollback always works
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} reqState [ r ] . status \.{=}\@w{partialFailure}}%
-\@x{\@s{16.4} \.{\land} {\IF} confOK}%
-\@x{\@s{31.61} \.{\THEN}}%
- \@x{\@s{48.01} \.{\land} reqState \.{'} \.{=} [ reqState {\EXCEPT} {\bang} [
- r ] . status \.{=}\@w{rolledback} ]}%
- \@x{\@s{48.01} \.{\land} clusterState \.{'} \.{=} [ clusterState {\EXCEPT}
- {\bang} . complete \.{=} {\TRUE} ]}%
- \@x{\@s{48.01} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastSubmitted ,\,
- queue {\rangle}}%
-\@x{\@s{31.61} \.{\ELSE}}%
-\@x{\@s{48.01} {\UNCHANGED} vars}%
-\@pvspace{24.0pt}%
+\@x{\@s{47.86} \.{\THEN}}%
+ \@x{\@s{64.26} \.{\land} cluster \.{'}\@s{9.23} \.{=}\@s{4.1} [ cluster
+ {\EXCEPT} {\bang} . st \.{=}\@w{idle} ]}%
+\@x{\@s{64.26} \.{\land} lastVOK \.{'} \.{=} workers [ w ] . v}%
+ \@x{\@s{64.26} \.{\land} workers \.{'}\@s{4.76} \.{=} [ workers {\EXCEPT}
+ {\bang} [ w ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
+ \@x{\@s{64.26} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ toApply ,\, requests {\rangle}}%
+\@x{\@s{47.86} \.{\ELSE}}%
+ \@x{\@s{64.26} \.{\land} cluster \.{'}\@s{4.47} \.{=}\@s{4.1} [ cluster
+ {\EXCEPT} {\bang} . st \.{=}\@w{failed} ]}%
+ \@x{\@s{64.26} \.{\land} workers \.{'} \.{=} [ workers {\EXCEPT} {\bang} [ w
+ ] . st \.{=}\@w{waiting} ,\, {\bang} [ w ] . v \.{=} NULL ]}%
+ \@x{\@s{64.26} \.{\land} {\UNCHANGED} {\langle} confOK ,\, lastVSubmitted ,\,
+ lastVOK ,\, toApply ,\, requests {\rangle}}%
+\@pvspace{16.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
 Requirements
 \end{cpar}%
 \end{lcom}%
+\@x{ NoConcurrentUpdate \.{\defeq}}%
+ \@x{\@s{16.4} {\Box} ( Cardinality ( \{ r \.{\in} {\DOMAIN} requests \.{:}
+ requests [ r ] . st \.{=}\@w{working} \} ) \.{<} 2 )}%
+\@pvspace{8.0pt}%
 \@x{ NoPartialUpdateTermination \.{\defeq}}%
 \@y{\@s{0}%
- we don’t want the cluster to end up in a partially update state
-}%
+ we don’t want the cluster to end up in a partially update \ensuremath{st
+}}%
 \@xx{}%
-\@x{\@s{16.4} {\Diamond} {\Box} ( clusterState . complete \.{=} {\TRUE} )}%
-\@pvspace{16.0pt}%
-\@x{ NoApplicationOfOutdatedReq \.{\defeq}}%
-\@y{\@s{0}%
- we don’t want transition updates of successive requests
-}%
-\@xx{}%
- \@x{\@s{16.4} {\Box} ( \{ r \.{\in} {\DOMAIN} reqState \.{:} {\ENABLED}
- StartApply ( r ) \.{\land} reqState [ r ] . rank \.{\neq} lastSubmitted \}
- \.{=} \{ \} )}%
-\@pvspace{16.0pt}%
-\@x{ EveryReqInQueueIsProcessed \.{\defeq}}%
-\@y{\@s{0}%
- we don’t want messages to stay in queue
-}%
-\@xx{}%
-\@x{\@s{16.4} {\Diamond} {\Box} ( queue \.{=} \{ \} )}%
+\@x{\@s{16.4} {\Diamond} {\Box} ( cluster . st \.{=}\@w{idle} )}%
+\@pvspace{8.0pt}%
+\@x{ EveryReqIsProcessed \.{\defeq}}%
+ \@x{\@s{16.4} {\Diamond} {\Box} ( {\lnot} \E\, r \.{\in} \_Requests \.{:}
+ requests [ r ] . st \.{=}\@w{waiting} )}%
 \@pvspace{24.0pt}%
 \begin{lcom}{0}%
 \begin{cpar}{0}{F}{F}{0}{0}{}%
 Spec
 \end{cpar}%
 \end{lcom}%
-\@x{ Fairness \.{\defeq}}%
-\@x{\@s{16.4} \A\, r \.{\in} Reqs \.{:}}%
-\@x{\@s{27.72} \.{\land} {\WF}_{ vars} ( PushToQueue ( r ) )}%
-\@x{\@s{27.72} \.{\land} {\WF}_{ vars} ( ProcessQueue )}%
-\@x{\@s{27.72} \.{\land} {\WF}_{ vars} ( CompleteApply ( r ) )}%
-\@x{\@s{27.72} \.{\land} {\WF}_{ vars} ( Rollback ( r ) )}%
-\@pvspace{16.0pt}%
+\@pvspace{24.0pt}%
 \@x{ Next \.{\defeq}}%
-\@x{\@s{16.4} ProcessQueue \.{\lor}}%
-\@x{\@s{16.4} \E\, r \.{\in} Reqs \.{:}}%
-\@x{\@s{27.72} \.{\lor} Submit ( r ) \.{\lor} Initialcheck ( r )}%
-\@x{\@s{27.72} \.{\lor} PushToQueue ( r )}%
-\@x{\@s{27.72} \.{\lor} StartApply ( r ) \.{\lor} CompleteApply ( r )}%
-\@x{\@s{27.72} \.{\lor} Rollback ( r )}%
+\@x{\@s{16.4} \.{\lor} \E\, r \.{\in} \_Requests \.{:}}%
+\@x{\@s{40.02} \.{\lor} Submit ( r )}%
+\@x{\@s{40.02} \.{\lor} Initialcheck ( r )}%
+\@x{\@s{40.02} \.{\lor} PushToPending ( r )}%
+\@x{\@s{16.4} \.{\lor} \E\, w \.{\in} \_Workers \.{:}}%
+\@x{\@s{42.45} \.{\lor} SpawnWorker ( w )}%
+\@x{\@s{42.45} \.{\lor} ApplyStart ( w )}%
+\@x{\@s{42.45} \.{\lor} ApplyFinish ( w )}%
+\@pvspace{16.0pt}%
+ \@x{ Fairness \.{\defeq} \A\, r \.{\in} \_Requests ,\, w \.{\in} \_Workers
+ \.{:}}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( Submit ( r ) )}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( Initialcheck ( r ) )}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( PushToPending ( r ) )}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( SpawnWorker ( w ) )}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( ApplyStart ( w ) )}%
+\@x{\@s{67.58} \.{\land} {\WF}_{ vars} ( ApplyFinish ( w ) )}%
 \@pvspace{16.0pt}%
 \@x{ Spec \.{\defeq}}%
- \@x{\@s{8.2} \.{\land}\@s{0.16} Init \.{\land} {\Box} [ Next ]_{ vars}
- \.{\land} Fairness}%
-\@pvspace{16.0pt}%
+\@x{\@s{8.2} \.{\land}\@s{0.16} Init}%
+\@x{\@s{8.2} \.{\land}\@s{0.16} {\Box} [ Next ]_{ vars}}%
+\@x{\@s{8.2} \.{\land}\@s{0.16} Fairness}%
+\@pvspace{32.0pt}%
 \@x{ {\THEOREM} Spec \.{\implies} {\Box} ( TypeInvariants )}%
 \@x{ {\THEOREM} Spec \.{\implies} NoPartialUpdateTermination}%
-\@x{ {\THEOREM} Spec \.{\implies} NoApplicationOfOutdatedReq}%
-\@x{ {\THEOREM} Spec \.{\implies} EveryReqInQueueIsProcessed}%
+\@x{}%
+\@y{%
+ \ensuremath{{\THEOREM}} \ensuremath{Spec \.{\implies}
+ NoApplicationOfOutdatedReq
+}}%
+\@xx{}%
+\@x{}%
+\@y{%
+ \ensuremath{{\THEOREM}} \ensuremath{Spec \.{\implies}
+ EveryReqInQueueIsProcessed
+}}%
+\@xx{}%
 \@pvspace{8.0pt}%
 \@x{}\bottombar\@xx{}%
 \end{document}

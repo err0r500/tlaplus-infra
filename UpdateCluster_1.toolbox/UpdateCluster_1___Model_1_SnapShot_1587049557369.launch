@@ -2,7 +2,7 @@
 <launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
     <stringAttribute key="TLCCmdLineParameters" value=""/>
     <intAttribute key="collectCoverage" value="1"/>
-    <stringAttribute key="configurationName" value="Model_1"/>
+    <stringAttribute key="configurationName" value="Model_1_SnapShot_1587049557369"/>
     <booleanAttribute key="deferLiveness" value="true"/>
     <intAttribute key="dfidDepth" value="100"/>
     <booleanAttribute key="dfidMode" value="false"/>
@@ -12,7 +12,7 @@
     <stringAttribute key="distributedTLC" value="off"/>
     <stringAttribute key="distributedTLCVMArgs" value=""/>
     <intAttribute key="fpBits" value="1"/>
-    <intAttribute key="fpIndex" value="43"/>
+    <intAttribute key="fpIndex" value="10"/>
     <booleanAttribute key="fpIndexRandom" value="true"/>
     <intAttribute key="maxHeapSize" value="50"/>
     <intAttribute key="maxSetSize" value="1000000"/>
@@ -21,7 +21,7 @@
     <stringAttribute key="modelBehaviorNext" value=""/>
     <stringAttribute key="modelBehaviorSpec" value="Spec"/>
     <intAttribute key="modelBehaviorSpecType" value="1"/>
-    <stringAttribute key="modelBehaviorVars" value="confOK, lock, toApply, cluster, lastVSubmitted, requests, lastVOK, workers"/>
+    <stringAttribute key="modelBehaviorVars" value="confOK, toApply, cluster, lastVSubmitted, requests, lastVOK, workers"/>
     <stringAttribute key="modelComments" value=""/>
     <booleanAttribute key="modelCorrectnessCheckDeadlock" value="false"/>
     <listAttribute key="modelCorrectnessInvariants">
@@ -29,8 +29,6 @@
     </listAttribute>
     <listAttribute key="modelCorrectnessProperties">
         <listEntry value="1NoPartialUpdateTermination"/>
-        <listEntry value="1EveryReqIsProcessed"/>
-        <listEntry value="1NoConcurrentUpdate"/>
     </listAttribute>
     <intAttribute key="modelEditorOpenTabs" value="0"/>
     <stringAttribute key="modelExpressionEval" value=""/>

@@ -1,0 +1,568 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.14 of 10 July 2019
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2187:0 @!@!@
+Running breadth-first search Model-Checking with fp 10 and seed 1658465914365627791 with 6 workers on 8 cores with 2336MB heap and 5254MB offheap memory [pid: 149320] (Linux 5.5.13-200.fc31.x86_64 amd64, AdoptOpenJDK 11.0.3 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+@!@!@ENDMSG 2187 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file /home/matth/projects/tlaplus/infra/UpdateCluster_1.toolbox/Model_1/MC.tla
+Parsing file /home/matth/projects/tlaplus/infra/UpdateCluster_1.toolbox/Model_1/UpdateCluster.tla
+Parsing file /home/matth/bin/tlatoolbox/plugins/org.lamport.tlatools_1.0.0.201907102009/tla2sany/StandardModules/TLC.tla
+Parsing file /home/matth/bin/tlatoolbox/plugins/org.lamport.tlatools_1.0.0.201907102009/tla2sany/StandardModules/Integers.tla
+Parsing file /home/matth/bin/tlatoolbox/plugins/org.lamport.tlatools_1.0.0.201907102009/tla2sany/StandardModules/FiniteSets.tla
+Parsing file /home/matth/bin/tlatoolbox/plugins/org.lamport.tlatools_1.0.0.201907102009/tla2sany/StandardModules/Naturals.tla
+Parsing file /home/matth/bin/tlatoolbox/plugins/org.lamport.tlatools_1.0.0.201907102009/tla2sany/StandardModules/Sequences.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module UpdateCluster
+Semantic processing of module TLC
+Semantic processing of module MC
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2020-04-16 17:05:52)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2212:0 @!@!@
+Implied-temporal checking--satisfiability problem has 1 branches.
+@!@!@ENDMSG 2212 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 2 distinct states generated at 2020-04-16 17:05:53.
+@!@!@ENDMSG 2190 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2020-04-16 17:05:56: 63,380 states generated, 16,892 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2192:0 @!@!@
+Checking temporal properties for the complete state space with 16892 total distinct states at (2020-04-16 17:05:56)
+@!@!@ENDMSG 2192 @!@!@
+@!@!@STARTMSG 2116:1 @!@!@
+Temporal properties were violated.
+
+@!@!@ENDMSG 2116 @!@!@
+@!@!@STARTMSG 2264:1 @!@!@
+The following behavior constitutes a counter-example:
+
+@!@!@ENDMSG 2264 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+1: <Initial predicate>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 0
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 0
+/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "waiting", v |-> NULL] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+2: <Submit line 77, col 5 to line 80, col 69 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 0
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 1
+/\ requests = ( r1 :> [st |-> "waiting", v |-> NULL] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "submitted", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+3: <Submit line 77, col 5 to line 80, col 69 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 0
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "submitted", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "submitted", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+4: <Initialcheck line 84, col 5 to line 91, col 85 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 0
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "submitted", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+5: <Initialcheck line 84, col 5 to line 91, col 85 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 0
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "valid", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+6: <PushToPending line 95, col 5 to line 100, col 94 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "valid", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+7: <SpawnWorker line 104, col 5 to line 114, col 80 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 0]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "valid", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "starting", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+8: <ApplyStart line 119, col 5 to line 134, col 94 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "partial", v |-> 2]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "valid", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 0
+/\ workers = (w1 :> [st |-> "working", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+9: <ApplyFinish line 138, col 5 to line 150, col 83 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "valid", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+10: <PushToPending line 95, col 5 to line 100, col 94 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 2
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "waiting", v |-> NULL] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+11: <Submit line 77, col 5 to line 80, col 69 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "submitted", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+12: <SpawnWorker line 104, col 5 to line 114, col 80 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "submitted", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "starting", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+13: <Initialcheck line 84, col 5 to line 91, col 85 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "rejected", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "starting", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+14: <ApplyStart line 119, col 5 to line 134, col 94 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "partial", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "rejected", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "working", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+15: <ApplyFinish line 138, col 5 to line 150, col 83 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = FALSE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "rejected", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "waiting", v |-> NULL] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+16: <SpawnWorker line 104, col 5 to line 114, col 80 of module UpdateCluster>
+/\ confOK = TRUE
+/\ lock = TRUE
+/\ toApply = 2
+/\ cluster = [st |-> "complete", v |-> 2]
+/\ lastVSubmitted = 3
+/\ requests = ( r1 :> [st |-> "rejected", v |-> 2] @@
+  r2 :> [st |-> "rejected", v |-> 3] @@
+  r3 :> [st |-> "rejected", v |-> 1] )
+/\ lastVOK = 2
+/\ workers = (w1 :> [st |-> "starting", v |-> 2] @@ w2 :> [st |-> "waiting", v |-> NULL])
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2122:4 @!@!@
+14: Back to state: <ApplyStart line 119, col 5 to line 134, col 94 of module UpdateCluster>
+
+@!@!@ENDMSG 2122 @!@!@
+@!@!@STARTMSG 2267:0 @!@!@
+Finished checking temporal properties in 00s at 2020-04-16 17:05:56
+@!@!@ENDMSG 2267 @!@!@
+@!@!@STARTMSG 2201:0 @!@!@
+The coverage statistics at 2020-04-16 17:05:56
+@!@!@ENDMSG 2201 @!@!@
+@!@!@STARTMSG 2773:0 @!@!@
+<Init line 60, col 1 to line 60, col 4 of module UpdateCluster>: 4:4
+@!@!@ENDMSG 2773 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 61, col 8 to line 61, col 70 of module UpdateCluster: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 62, col 8 to line 62, col 68 of module UpdateCluster: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 63, col 8 to line 63, col 45 of module UpdateCluster: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 67, col 8 to line 67, col 25 of module UpdateCluster: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 68, col 8 to line 68, col 19 of module UpdateCluster: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Submit line 75, col 1 to line 75, col 9 of module UpdateCluster (77 5 80 69)>: 511:3081
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 77, col 8 to line 77, col 33 of module UpdateCluster: 53795
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 77, col 8 to line 77, col 21 of module UpdateCluster: 50714
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 78, col 8 to line 78, col 29 of module UpdateCluster: 3081
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 79, col 8 to line 79, col 73 of module UpdateCluster: 3081
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 80, col 8 to line 80, col 69 of module UpdateCluster: 3081
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Initialcheck line 83, col 1 to line 83, col 15 of module UpdateCluster>: 1545:17674
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 84, col 8 to line 84, col 35 of module UpdateCluster: 59548
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 84, col 8 to line 84, col 21 of module UpdateCluster: 50711
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 86, col 12 to line 86, col 13 of module UpdateCluster: 17674
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 88, col 17 to line 88, col 64 of module UpdateCluster: 8837
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 90, col 17 to line 90, col 67 of module UpdateCluster: 8837
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 85, col 18 to line 85, col 24 of module UpdateCluster: 8837
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 91, col 8 to line 91, col 85 of module UpdateCluster: 17674
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<PushToPending line 94, col 1 to line 94, col 16 of module UpdateCluster>: 4187:19391
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 95, col 8 to line 95, col 31 of module UpdateCluster: 70099
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 95, col 8 to line 95, col 21 of module UpdateCluster: 50708
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 96, col 11 to line 96, col 33 of module UpdateCluster: 19391
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 97, col 17 to line 97, col 40 of module UpdateCluster: 5017
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 98, col 17 to line 98, col 95 of module UpdateCluster: 5017
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 99, col 17 to line 99, col 66 of module UpdateCluster: 14374
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 100, col 17 to line 100, col 94 of module UpdateCluster: 14374
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<SpawnWorker line 103, col 1 to line 103, col 14 of module UpdateCluster>: 5443:5659
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 104, col 8 to line 104, col 32 of module UpdateCluster: 39451
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 104, col 8 to line 104, col 20 of module UpdateCluster: 33792
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 105, col 8 to line 105, col 19 of module UpdateCluster: 26246
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 105, col 8 to line 105, col 11 of module UpdateCluster: 20587
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 105, col 15 to line 105, col 19 of module UpdateCluster: 20587
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 106, col 12 to line 106, col 34 of module UpdateCluster: 9458
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 106, col 12 to line 106, col 21 of module UpdateCluster: 5659
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 107, col 12 to line 107, col 32 of module UpdateCluster: 7519
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 107, col 12 to line 107, col 21 of module UpdateCluster: 5659
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 108, col 11 to line 108, col 33 of module UpdateCluster: 5659
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 110, col 13 to line 110, col 81 of module UpdateCluster: 3799
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 112, col 13 to line 112, col 81 of module UpdateCluster: 1860
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 113, col 8 to line 113, col 19 of module UpdateCluster: 5659
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 114, col 8 to line 114, col 80 of module UpdateCluster: 5659
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<ApplyStart line 118, col 1 to line 118, col 13 of module UpdateCluster>: 3766:8803
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 119, col 8 to line 119, col 33 of module UpdateCluster: 42592
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 119, col 8 to line 119, col 20 of module UpdateCluster: 33789
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 120, col 11 to line 121, col 35 of module UpdateCluster: 8803
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 120, col 14 to line 120, col 42 of module UpdateCluster: 8803
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 121, col 14 to line 121, col 35 of module UpdateCluster: 7562
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 123, col 16 to line 123, col 21 of module UpdateCluster: 6595
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 125, col 24 to line 125, col 72 of module UpdateCluster: 5039
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 126, col 24 to line 126, col 70 of module UpdateCluster: 5039
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 127, col 24 to line 127, col 93 of module UpdateCluster: 5039
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 129, col 24 to line 129, col 36 of module UpdateCluster: 1556
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 130, col 24 to line 130, col 85 of module UpdateCluster: 1556
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 131, col 24 to line 131, col 96 of module UpdateCluster: 1556
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 133, col 16 to line 133, col 77 of module UpdateCluster: 2208
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 134, col 16 to line 134, col 94 of module UpdateCluster: 2208
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<ApplyFinish line 137, col 1 to line 137, col 14 of module UpdateCluster>: 1438:8804
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 138, col 8 to line 138, col 32 of module UpdateCluster: 38188
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 138, col 8 to line 138, col 20 of module UpdateCluster: 33786
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 139, col 8 to line 139, col 20 of module UpdateCluster: 4402
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 141, col 12 to line 141, col 39 of module UpdateCluster: 8804
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 141, col 12 to line 141, col 13 of module UpdateCluster: 8804
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 141, col 18 to line 141, col 39 of module UpdateCluster: 4402
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 143, col 20 to line 143, col 65 of module UpdateCluster: 6943
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 144, col 20 to line 144, col 42 of module UpdateCluster: 6943
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 145, col 20 to line 145, col 81 of module UpdateCluster: 6943
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 146, col 20 to line 146, col 74 of module UpdateCluster: 6943
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 148, col 20 to line 148, col 63 of module UpdateCluster: 1861
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 149, col 20 to line 149, col 81 of module UpdateCluster: 1861
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 150, col 20 to line 150, col 83 of module UpdateCluster: 1861
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 140, col 18 to line 140, col 24 of module UpdateCluster: 4402
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2774:0 @!@!@
+<TypeInvariants line 27, col 1 to line 27, col 14 of module UpdateCluster>
+@!@!@ENDMSG 2774 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 28, col 5 to line 53, col 9 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 28, col 8 to line 28, col 25 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 29, col 8 to line 29, col 23 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 30, col 8 to line 30, col 25 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 24, col 5 to line 24, col 72 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 24, col 5 to line 24, col 68 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 24, col 17 to line 24, col 67 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 24, col 41 to line 24, col 66 of module UpdateCluster: 50676
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 24, col 24 to line 24, col 38 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 31, col 8 to line 36, col 9 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 37, col 8 to line 48, col 9 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 37, col 29 to line 48, col 9 of module UpdateCluster: 50676
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 37, col 17 to line 37, col 25 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 49, col 8 to line 53, col 9 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 49, col 28 to line 53, col 9 of module UpdateCluster: 33784
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 49, col 17 to line 49, col 24 of module UpdateCluster: 16892
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2202:0 @!@!@
+End of statistics.
+@!@!@ENDMSG 2202 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(20) at 2020-04-16 17:05:56: 63,380 states generated (877,231 s/min), 16,892 distinct states found (233,799 ds/min), 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2199:0 @!@!@
+63380 states generated, 16892 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 4337ms at (2020-04-16 17:05:56)
+@!@!@ENDMSG 2186 @!@!@

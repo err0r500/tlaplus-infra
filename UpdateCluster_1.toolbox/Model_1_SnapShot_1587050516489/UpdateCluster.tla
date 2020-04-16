@@ -2,7 +2,7 @@
 EXTENDS Integers, FiniteSets
 
 
-CONSTANTS  
+CONSTANT  
     _Requests, \* the requests sent by the user
     _Workers, \* the pool of workers
     NULL
@@ -24,7 +24,7 @@ TypeInvariants ==
     /\ confOK \in BOOLEAN \* won't change for a specific behavior
     /\ lock \in BOOLEAN
     /\ cluster.st \in {
-        "idle", 
+        "complete", 
         "starting",
         "partial", 
         "failed" 
@@ -55,7 +55,7 @@ TypeInvariants ==
 Init == 
     /\ requests = [r \in _Requests |-> [st |-> "waiting", v |-> NULL]]
     /\ workers = [w \in _Workers |-> [st |-> "waiting", v |-> NULL]] 
-    /\ cluster = [v |-> 0, st |-> "idle"]
+    /\ cluster = [v |-> 0, st |-> "complete"]
     /\ lastVOK = 0 
     /\ lastVSubmitted = 0
     /\ toApply = 0 
@@ -98,9 +98,9 @@ PushToPending(r) == \* the request is pushed to queue
 SpawnWorker(w) == \* spawns a new worker
     /\ workers[w].st = "waiting"
     /\ lock = FALSE
-    /\  \/ cluster.st = "idle"
+    /\  \/ cluster.st = "complete"
         \/ cluster.st = "failed"
-    /\ IF cluster.st = "idle" 
+    /\ IF cluster.st = "complete" 
         THEN 
             /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
         ELSE
@@ -135,7 +135,7 @@ ApplyFinish(w) == \* the cluster update finishes
     /\ \E ok \in BOOLEAN : 
         IF ok \/ workers[w].v = lastVOK  \* rollback always works
             THEN 
-                /\ cluster' =  [cluster EXCEPT !.st = "idle"]
+                /\ cluster' =  [cluster EXCEPT !.st = "complete"]
                 /\ lastVOK' = workers[w].v
                 /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
                 /\ UNCHANGED <<confOK, lastVSubmitted, toApply, requests>>
@@ -152,12 +152,18 @@ NoConcurrentUpdate ==
     [](Cardinality({r \in DOMAIN requests: requests[r].st = "working"}) < 2)
     
 NoPartialUpdateTermination == \* we don’t want the cluster to end up in a partially update st
-    <>[](cluster.st = "idle")
+    <>[](cluster.st = "complete")
 
 EveryReqIsProcessed ==
     <>[](~\E r \in _Requests: requests[r].st = "waiting")
     
+\*NoApplicationOfOutdatedReq == \* we don’t want transition updates of successive requests
+\*    [](\E w \in _Workers: ENABLED ApplyStart(w) ~> requests[r].rank /= lastVOK)
     
+    
+
+
+
 
 (***************************************************************************)
 (* Spec                                                                    *)
