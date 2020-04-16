@@ -1,24 +1,25 @@
 ---- MODULE UpdateCluster ----
 EXTENDS Integers, FiniteSets
 
-
 CONSTANTS  
     _Requests, \* the requests sent by the user
     _Workers, \* the pool of workers
     NULL
 
+VARIABLES 
+    lastVOK, \* last successfully applied version
+    toApply, \* the version to apply (last requets that passed the initial tests)
+    cluster, \*  cluster state 
+    requests, \* the state of all requests
+    workers, \* the state of all workers
+    lock \* damn, I used a lock...
 
 VARIABLES 
+    \* these variables are tla+ details
     confOK, \* are we able to get a valid conf ? 
-    lastVSubmitted, \* just to keep track of the order of submissions 
-    lastVOK, \* last v where the cluster was fully applied (used by rollback)
-    toApply, \* the version to apply (lastVsubmitted that passed the initial tests)
-    cluster, \* last cluster fully deployed 
-    requests, \* the st of all requests (requests[req]) 
-    workers,
-    lock
-vars == <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests, workers, lock>>
+    reqCounter \* just to keep track of the order of submissions 
 
+vars == <<confOK, reqCounter, lastVOK, toApply, cluster, requests, workers, lock>>
 
 TypeInvariants == 
     /\ confOK \in BOOLEAN \* won't change for a specific behavior
@@ -33,13 +34,7 @@ TypeInvariants ==
         "waiting", \* the request (req) hasn't been submitted yet
         "submitted", \* req has been submitted
         "rejected", \* req has been rejected (auth problem)
-        "valid", \* auth etc passed 
-        "processing", \* the processing of the req has started
-        "partial", \* req is partially applied (the infra is partially modified)
-        "partialFailure", \* req failed in the middle of an application
-        "success", \* req has been sucessfully applied
-        "failure", \* the req failed before modifying the cluster
-        "rolledback" \* the req has been rolledback
+        "valid" \* auth etc passed 
         }
     /\ \A w \in _Workers : workers[w].st \in {
         "waiting", 
@@ -57,7 +52,7 @@ Init ==
     /\ workers = [w \in _Workers |-> [st |-> "waiting", v |-> NULL]] 
     /\ cluster = [v |-> 0, st |-> "idle"]
     /\ lastVOK = 0 
-    /\ lastVSubmitted = 0
+    /\ reqCounter = 0
     /\ toApply = 0 
     /\ confOK \in BOOLEAN
     /\ lock = FALSE
@@ -68,9 +63,9 @@ Init ==
 (* Actions                                                                 *)
 (***************************************************************************)
 Submit(r) == \* update request received from the user 
-    LET newV == lastVSubmitted + 1 IN
+    LET newV == reqCounter + 1 IN
     /\ requests[r].st = "waiting"
-    /\ lastVSubmitted' = newV
+    /\ reqCounter' = newV
     /\ requests' = [requests EXCEPT ![r].st = "submitted", ![r].v = newV]
     /\ UNCHANGED <<confOK, lastVOK, toApply, cluster, workers, lock>>
 
@@ -83,68 +78,75 @@ Initialcheck(r) == \* request validation (auth, quotas...)
                 requests' = [requests EXCEPT  ![r].st = "valid"]
             ELSE 
                 requests' = [requests EXCEPT  ![r].st = "rejected"]
-    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, workers, lock>>
+    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, lock>>
 
 
 PushToPending(r) == \* the request is pushed to queue
     /\ requests[r].st = "valid"
     /\ IF toApply < requests[r].v
         THEN /\ toApply' = requests[r].v
-             /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, cluster, requests, workers, lock>>
+             /\ UNCHANGED <<confOK, reqCounter, lastVOK, cluster, requests, workers, lock>>
         ELSE /\ requests' = [requests EXCEPT ![r].st = "rejected"]
-             /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, workers, lock>>
+             /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, lock>>
 
 
 SpawnWorker(w) == \* spawns a new worker
     /\ workers[w].st = "waiting"
+    /\ toApply /= lastVOK
     /\ lock = FALSE
     /\  \/ cluster.st = "idle"
         \/ cluster.st = "failed"
-    /\ IF cluster.st = "idle" 
-        THEN 
-            /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
-        ELSE
-            /\ workers' = [workers EXCEPT ![w].v = lastVOK, ![w].st = "starting"]
+    /\ workers' = [workers EXCEPT ![w].v = toApply, ![w].st = "starting"]
     /\ lock' = TRUE
-    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests, cluster>> 
+    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests, cluster>> 
     
 
 
 ApplyStart(w) == \* the cluster starts to be modified
     /\ workers[w].st = "starting"
-    /\ IF \/ workers[w].v = lastVSubmitted 
-          \/ workers[w].v = lastVOK \* rollingback
+    /\ IF workers[w].v >= toApply 
         THEN 
             IF confOK 
                 THEN 
                     /\ cluster' = [v |-> workers[w].v, st |-> "partial"]
                     /\ workers' = [workers EXCEPT ![w].st = "working"]
-                    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests, lock>>
+                    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests, lock>>
                 ELSE 
                     /\ lock' = FALSE
                     /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
-                    /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests>>       
-        ELSE
+                    /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, requests>>       
+        ELSE \* a new version has been submitted, no need to apply this one
             /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
-            /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, cluster, requests, lock>>
+            /\ lock' = FALSE
+            /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, requests>>
     
     
+RollbackVersion == 
+    \* to differenciate it from the original last VOK
+    lastVOK + 10
+
 ApplyFinish(w) == \* the cluster update finishes
     /\ workers[w].st = "working"
     /\ lock' = FALSE
     /\ \E ok \in BOOLEAN : 
-        IF ok \/ workers[w].v = lastVOK  \* rollback always works
+        IF ok \/ workers[w].v = RollbackVersion  \* rollback always works
             THEN 
                 /\ cluster' =  [cluster EXCEPT !.st = "idle"]
                 /\ lastVOK' = workers[w].v
                 /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
-                /\ UNCHANGED <<confOK, lastVSubmitted, toApply, requests>>
+                /\ UNCHANGED <<confOK, reqCounter, toApply, requests>>
             ELSE
                 /\ cluster' =  [cluster EXCEPT !.st = "failed"]
                 /\ workers' = [workers EXCEPT ![w].st = "waiting", ![w].v = NULL] 
-                /\ UNCHANGED <<confOK, lastVSubmitted, lastVOK, toApply, requests>>
+                /\ IF workers[w].v < toApply
+                    THEN \* a newer version has been submitted
+                        /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, requests>>
+                    ELSE \* let's trigger a rollback
+                        /\ toApply' = RollbackVersion 
+                        /\ UNCHANGED <<confOK, reqCounter, lastVOK, requests>>
             
-            
+
+
 (***************************************************************************)
 (* Requirements                                                            *)
 (***************************************************************************)
@@ -162,9 +164,6 @@ EveryReqIsProcessed ==
 (***************************************************************************)
 (* Spec                                                                    *)
 (***************************************************************************)
-
-        
-        
 Next ==
     \/ \E r \in _Requests : 
             \/ Submit(r) 
@@ -191,11 +190,6 @@ Spec ==
   /\ Fairness
 
 
-
-
 THEOREM Spec => [](TypeInvariants)
 THEOREM Spec => NoPartialUpdateTermination
-\*THEOREM Spec => NoApplicationOfOutdatedReq
-\*THEOREM Spec => EveryReqInQueueIsProcessed
-
 =====
