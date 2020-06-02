@@ -1073,10 +1073,16 @@ Initial State
 Actions
 \end{cpar}%
 \end{lcom}%
+\@pvspace{8.0pt}%
+\@x{}%
+\@y{\@s{0}%
+ request actions
+}%
+\@xx{}%
 \@x{ Submit ( r ) \.{\defeq}}%
 \@x{\@s{16.4}}%
 \@y{\@s{0}%
- update request received from the user
+ update request received
 }%
 \@xx{}%
 \@x{\@s{16.4} \.{\LET} newV \.{\defeq} reqCounter \.{+} 1 \.{\IN}}%
@@ -1090,7 +1096,7 @@ Actions
 \@x{ PushToPending ( r ) \.{\defeq}}%
 \@x{\@s{16.4}}%
 \@y{\@s{0}%
- the request is pushed to queue
+ the request is pushed
 }%
 \@xx{}%
 \@x{\@s{16.4} \.{\land} requests [ r ] . st \.{=}\@w{submitted}}%
@@ -1104,15 +1110,20 @@ Actions
  {\bang} [ r ] . st \.{=}\@w{rejected} ]}%
  \@x{\@s{62.92} \.{\land} {\UNCHANGED} {\langle} confOK ,\, reqCounter ,\,
  lastVOK ,\, toApply ,\, cluster ,\, workers ,\, clusterUpdating {\rangle}}%
-\@pvspace{16.0pt}%
+\@pvspace{8.0pt}%
+\@x{}%
+\@y{\@s{0}%
+ worker action
+}%
+\@xx{}%
 \@x{ SpawnWorker ( w ) \.{\defeq}}%
 \@x{\@s{16.4}}%
 \@y{\@s{0}%
  spawns a new worker
 }%
 \@xx{}%
-\@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{waiting}}%
 \@x{\@s{16.4} \.{\land} toApply \.{\neq} lastVOK}%
+\@x{\@s{16.4} \.{\land} workers [ w ] . st \.{=}\@w{waiting}}%
 \@x{\@s{16.4} \.{\land} clusterUpdating \.{=} {\FALSE}}%
 \@x{\@s{16.4} \.{\land}\@s{4.1} \.{\lor} cluster . st \.{=}\@w{idle}}%
 \@x{\@s{31.61} \.{\lor} cluster . st \.{=}\@w{failed}}%

@@ -62,6 +62,8 @@ Init ==
 (***************************************************************************)
 (* Actions                                                                 *)
 (***************************************************************************)
+
+\* request actions
 Submit(r) == 
     \* update request received
     LET newV == reqCounter + 1 IN
@@ -81,7 +83,7 @@ PushToPending(r) ==
         ELSE /\ requests' = [requests EXCEPT ![r].st = "rejected"]
              /\ UNCHANGED <<confOK, reqCounter, lastVOK, toApply, cluster, workers, clusterUpdating>>
 
-
+\* worker action
 SpawnWorker(w) == 
     \* spawns a new worker
     /\ toApply /= lastVOK

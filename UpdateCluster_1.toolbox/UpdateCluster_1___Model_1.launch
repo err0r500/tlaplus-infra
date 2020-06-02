@@ -7,23 +7,23 @@
     <intAttribute key="dfidDepth" value="100"/>
     <booleanAttribute key="dfidMode" value="false"/>
     <intAttribute key="distributedFPSetCount" value="0"/>
-    <stringAttribute key="distributedNetworkInterface" value="192.168.122.1"/>
+    <stringAttribute key="distributedNetworkInterface" value="192.168.39.1"/>
     <intAttribute key="distributedNodesCount" value="1"/>
     <stringAttribute key="distributedTLC" value="off"/>
     <stringAttribute key="distributedTLCVMArgs" value=""/>
     <intAttribute key="fpBits" value="1"/>
-    <intAttribute key="fpIndex" value="111"/>
+    <intAttribute key="fpIndex" value="125"/>
     <booleanAttribute key="fpIndexRandom" value="true"/>
-    <intAttribute key="maxHeapSize" value="50"/>
+    <intAttribute key="maxHeapSize" value="80"/>
     <intAttribute key="maxSetSize" value="1000000"/>
     <booleanAttribute key="mcMode" value="true"/>
     <stringAttribute key="modelBehaviorInit" value=""/>
     <stringAttribute key="modelBehaviorNext" value=""/>
     <stringAttribute key="modelBehaviorSpec" value="Spec"/>
     <intAttribute key="modelBehaviorSpecType" value="1"/>
-    <stringAttribute key="modelBehaviorVars" value="confOK, lock, toApply, cluster, lastVSubmitted, requests, lastVOK, workers"/>
+    <stringAttribute key="modelBehaviorVars" value="confOK, reqCounter, toApply, cluster, requests, lastVOK, clusterUpdating, workers"/>
     <stringAttribute key="modelComments" value=""/>
-    <booleanAttribute key="modelCorrectnessCheckDeadlock" value="false"/>
+    <booleanAttribute key="modelCorrectnessCheckDeadlock" value="true"/>
     <listAttribute key="modelCorrectnessInvariants">
         <listEntry value="1TypeInvariants"/>
     </listAttribute>
@@ -51,7 +51,7 @@
     <intAttribute key="simuDepth" value="100"/>
     <intAttribute key="simuSeed" value="-1"/>
     <stringAttribute key="specName" value="UpdateCluster_1"/>
-    <stringAttribute key="tlcResourcesProfile" value="local custom"/>
+    <stringAttribute key="tlcResourcesProfile" value="local most"/>
     <stringAttribute key="view" value=""/>
     <booleanAttribute key="visualizeStateGraph" value="false"/>
 </launchConfiguration>
