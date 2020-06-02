@@ -1,2 +1,6 @@
 *.toolbox/**.*
-*.states
+states/
+*.dvi
+*.aux
+*.log
+*.tex
