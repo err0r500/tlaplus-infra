@@ -1,6 +1,6 @@
-*.toolbox/**.*
+**/*.toolbox/
 states/
-*.dvi
-*.aux
+**/*.dvi
+**/*.aux
 *.log
 *.tex
