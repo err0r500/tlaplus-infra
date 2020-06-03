@@ -11,55 +11,58 @@ EXTENDS Integers, FiniteSets, Sequences
 
 CONSTANTS  
     _ReqIDs, \* the request IDs sent by the user (an Id is the idempotent key)
-    _MaxTries,
-    NULL
+    _MaxTries \* how many times a request is retried
 
 ASSUME _MaxTries < 10
 
 VARIABLES 
-    hits, \* the number of hits of the "protected" backend per requests
-    requests \* a specific request 
+    requests \* the state of all requests and their corresponding tries
 
-vars == <<requests, hits>>
+vars == <<requests>>
+
+\* `tryKeys' is a simple helper providing the set of try keys
+tryKeys == 1.._MaxTries
 
 (***************************************************************************)
 (* Initial State                                                           *)
 (***************************************************************************)
 Init == 
-    /\ requests = [req \in _ReqIDs |-> [st \in 0.._MaxTries |-> "pending"]]
-    /\ hits = [r \in _ReqIDs |-> 0]
+(***************************************************************************)
+(* `requests' is a struct with _ReqIDs as keys associated with structs with*)
+(* tryKeys as keys associatied with the given try current status           *)
+(***************************************************************************)
+    /\ requests = [req \in _ReqIDs |-> [st \in tryKeys |-> "pending"]] 
+    
+     
 
 TypeInvariants ==
   /\ TRUE \* todo
 
 
 
-
 (***************************************************************************)
 (* Actions                                                                 *)
 (***************************************************************************)
-HitProxy(r,i) ==
+HitProxy(r, i) ==
     /\ requests[r][i] = "pending"
     /\ requests' = [requests EXCEPT ![r][i] = "submitted"]
-    /\ UNCHANGED <<hits>>
+    
 
-
-
-HitServer(r,i) ==
+HitServer(r, i) ==
     /\ requests[r][i] = "submitted"
+    /\ Cardinality({x \in DOMAIN requests[r]: requests[r][x] = "processed"}) = 0 \* add a blocking thread
     /\ requests' = [requests EXCEPT ![r][i] = "processed"]
-    /\ UNCHANGED <<hits>>
 
 
 (***************************************************************************)
 (* Spec                                                                    *)
 (***************************************************************************)
 Next ==
-  \/ \E r \in _ReqIDs, i \in 0.._MaxTries:
+  \/ \E r \in _ReqIDs, i \in tryKeys:
     \/ HitProxy(r,i)
     \/ HitServer(r,i)
 
-Fairness == \A r \in _ReqIDs, i \in 0.._MaxTries : 
+Fairness == \A r \in _ReqIDs, i \in tryKeys : 
                 /\ SF_vars(HitServer(r,i)) 
                 /\ SF_vars(HitProxy(r,i))
  
