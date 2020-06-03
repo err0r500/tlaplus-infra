@@ -4,3 +4,4 @@ states/
 **/*.aux
 *.log
 *.tex
+*.out

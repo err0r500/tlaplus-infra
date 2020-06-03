@@ -17,21 +17,17 @@ CONSTANTS
 ASSUME _MaxTries < 10
 
 VARIABLES 
-    reqTriesCount, \* the different requests of specific _Requests 
     hits, \* the number of hits of the "protected" backend per requests
-    requests, \* a specific request 
-    responses \* the responses received by the client for each try
+    requests \* a specific request 
 
-vars == <<requests, reqTriesCount, hits, responses>>
+vars == <<requests, hits>>
 
 (***************************************************************************)
 (* Initial State                                                           *)
 (***************************************************************************)
 Init == 
-    /\ reqTriesCount = [r \in _ReqIDs |-> 0]
-    /\ requests = [r \in _ReqIDs |-> <<>>]
+    /\ requests = [req \in _ReqIDs |-> [st \in 0.._MaxTries |-> "pending"]]
     /\ hits = [r \in _ReqIDs |-> 0]
-    /\ responses = <<>> 
 
 TypeInvariants ==
   /\ TRUE \* todo
@@ -39,49 +35,42 @@ TypeInvariants ==
 
 
 
-
-
-
-
 (***************************************************************************)
 (* Actions                                                                 *)
 (***************************************************************************)
-HitProxy(r) ==
-    /\ reqTriesCount[r] < _MaxTries
-    /\ reqTriesCount' = [reqTriesCount EXCEPT ![r] = reqTriesCount[r] + 1]
-    /\ requests' = [requests EXCEPT ![r] = Append(requests[r], [id |-> reqTriesCount[r] + 1, st |-> "submitted"])]
-    /\ UNCHANGED <<hits, responses>>
-
-HitServer(r) ==
-    /\ requests[r].st = "submitted"
-    /\ requests' = [requests EXCEPT ![r].st = "processed"]
-    /\ UNCHANGED <<reqTriesCount, hits, responses>>
+HitProxy(r,i) ==
+    /\ requests[r][i] = "pending"
+    /\ requests' = [requests EXCEPT ![r][i] = "submitted"]
+    /\ UNCHANGED <<hits>>
 
 
 
-
-
+HitServer(r,i) ==
+    /\ requests[r][i] = "submitted"
+    /\ requests' = [requests EXCEPT ![r][i] = "processed"]
+    /\ UNCHANGED <<hits>>
 
 
 (***************************************************************************)
 (* Spec                                                                    *)
 (***************************************************************************)
 Next ==
-  \/ \E r \in _ReqIDs :
-    \/ HitProxy(r)
-    \/ HitServer(r)
+  \/ \E r \in _ReqIDs, i \in 0.._MaxTries:
+    \/ HitProxy(r,i)
+    \/ HitServer(r,i)
 
-Fairness == \A r \in _ReqIDs : 
-                /\ SF_vars(HitServer(r)) 
-                /\ SF_vars(HitProxy(r))
+Fairness == \A r \in _ReqIDs, i \in 0.._MaxTries : 
+                /\ SF_vars(HitServer(r,i)) 
+                /\ SF_vars(HitProxy(r,i))
  
 Spec == 
   /\ Init 
   /\ [][Next]_vars 
   /\ Fairness
 
-RequestIsProcessedOnlyOnce == 
-    [](\A req \in _ReqIDs : Len(SelectSeq(requests[req], LAMBDA r: r.st = "processed")) < 2)
+RequestIsProcessedOnlyOnce ==
+    [](\A req \in DOMAIN requests : Cardinality({x \in DOMAIN requests[req]: requests[req][x] = "processed"}) < 2)
 
 THEOREM Spec => RequestIsProcessedOnlyOnce
-====
+
+=====
