@@ -45,12 +45,15 @@ TypeInvariants ==
 (***************************************************************************)
 HitProxy(r, i) ==
     /\ requests[r][i] = "pending"
+    /\ Cardinality({x \in DOMAIN requests[r]: 
+                \/ requests[r][x] = "submitted" 
+                \/ requests[r][x] = "processed"}
+            ) = 0 \* add a blocking thread
     /\ requests' = [requests EXCEPT ![r][i] = "submitted"]
     
 
 HitServer(r, i) ==
     /\ requests[r][i] = "submitted"
-    /\ Cardinality({x \in DOMAIN requests[r]: requests[r][x] = "processed"}) = 0 \* add a blocking thread
     /\ requests' = [requests EXCEPT ![r][i] = "processed"]
 
 
@@ -74,6 +77,10 @@ Spec ==
 RequestIsProcessedOnlyOnce ==
     [](\A req \in DOMAIN requests : 
         Cardinality({x \in DOMAIN requests[req]: requests[req][x] = "processed"}) < 2)
+
+AttemptsAreProcessedConcurrently == 
+    <>(\A req \in DOMAIN requests : 
+        Cardinality({x \in DOMAIN requests[req]: requests[req][x] = "submitted"}) > 1)
 
 THEOREM Spec => RequestIsProcessedOnlyOnce
 
