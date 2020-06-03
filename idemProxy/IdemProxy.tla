@@ -72,7 +72,8 @@ Spec ==
   /\ Fairness
 
 RequestIsProcessedOnlyOnce ==
-    [](\A req \in DOMAIN requests : Cardinality({x \in DOMAIN requests[req]: requests[req][x] = "processed"}) < 2)
+    [](\A req \in DOMAIN requests : 
+        Cardinality({x \in DOMAIN requests[req]: requests[req][x] = "processed"}) < 2)
 
 THEOREM Spec => RequestIsProcessedOnlyOnce
 
