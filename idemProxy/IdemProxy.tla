@@ -2,8 +2,8 @@
 
 (***************************************************************************)
 (* Expectations :                                                          *)
-(* - Every request must hit the server exactly once                     *)
-(* - For each try of a request, the response must be the same              *)
+(* - Every request must hit the server exactly once                        *)
+(* - For each try of a request must get a response                         *)
 (* - 2 requests must be processable in parallel                            *)
 (***************************************************************************)
 
